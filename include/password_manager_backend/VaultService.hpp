@@ -1,5 +1,6 @@
 #pragma once
 
+#include "password_manager_backend/AuditService.hpp"
 #include "password_manager_backend/AuthService.hpp"
 #include "password_manager_backend/CryptoService.hpp"
 #include "password_manager_backend/Repositories.hpp"
@@ -14,7 +15,8 @@ public:
         VaultRepository& vaultRepository,
         AuthService& authService,
         CryptoService& cryptoService,
-        SearchService& searchService);
+        SearchService& searchService,
+        AuditService& auditService);
 
     Result<VaultEntryView> createVaultEntry(const VaultEntryInput& input);
     Result<std::vector<VaultEntryView>> getVaultEntries() const;
@@ -33,6 +35,7 @@ private:
     AuthService& authService_;
     CryptoService& cryptoService_;
     SearchService& searchService_;
+    AuditService& auditService_;
 };
 
 }  // namespace password_manager_backend

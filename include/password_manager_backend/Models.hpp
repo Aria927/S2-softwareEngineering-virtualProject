@@ -14,6 +14,12 @@ struct EncryptedBlob {
     std::string iv;
 };
 
+// Distinguishes standard users from users allowed to perform admin-only actions.
+enum class UserRole {
+    Standard,
+    Admin,
+};
+
 // Represents a locally registered user and their stored authentication material.
 struct UserAccount {
     std::string id;
@@ -23,6 +29,12 @@ struct UserAccount {
     std::string passwordSalt;
     std::string masterPasswordHash;
     std::string masterPasswordSalt;
+    UserRole role{UserRole::Standard};
+    bool mfaEnabled{false};
+    std::optional<EncryptedBlob> encryptedMfaSecret;
+    EncryptedBlob masterWrappedVaultKey;
+    EncryptedBlob passwordWrappedVaultKey;
+    EncryptedBlob recoveryWrappedVaultKey;
 };
 
 // Represents a vault record as stored by the persistence layer.
@@ -69,9 +81,15 @@ struct SearchQuery {
 struct SessionState {
     bool isAuthenticated{false};
     bool isVaultUnlocked{false};
+    bool isMfaRequired{false};
+    bool isAdmin{false};
     std::optional<std::string> userId;
     std::optional<std::string> username;
     std::optional<std::string> activeEncryptionKey;
+    std::optional<std::string> pendingUserId;
+    std::optional<std::string> pendingUsername;
+    std::optional<std::string> pendingMfaSecret;
+    bool pendingIsAdmin{false};
 };
 
 // Input model for user registration.
@@ -80,12 +98,32 @@ struct RegisterRequest {
     std::string email;
     std::string password;
     std::string masterPassword;
+    bool isAdmin{false};
 };
 
 // Input model for user login.
 struct LoginRequest {
     std::string username;
     std::string password;
+};
+
+// A small summary model used by the admin backend without exposing internal secrets.
+struct AdminUserView {
+    std::string id;
+    std::string username;
+    std::string email;
+    bool isAdmin{false};
+    bool mfaEnabled{false};
+};
+
+// Audit events provide a backend-side log of security and vault actions.
+struct AuditEvent {
+    std::string id;
+    std::string userId;
+    std::string username;
+    std::string action;
+    std::string details;
+    std::string timestamp;
 };
 
 // Simple success/failure result for operations that do not return data.

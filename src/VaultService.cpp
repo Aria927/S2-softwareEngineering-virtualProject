@@ -8,11 +8,13 @@ VaultService::VaultService(
     VaultRepository& vaultRepository,
     AuthService& authService,
     CryptoService& cryptoService,
-    SearchService& searchService)
+    SearchService& searchService,
+    AuditService& auditService)
     : vaultRepository_(vaultRepository),
       authService_(authService),
       cryptoService_(cryptoService),
-      searchService_(searchService) {}
+      searchService_(searchService),
+      auditService_(auditService) {}
 
 Result<VaultEntryView> VaultService::createVaultEntry(const VaultEntryInput& input) {
     const auto validationResult = validateEntryInput(input);
@@ -44,6 +46,7 @@ Result<VaultEntryView> VaultService::createVaultEntry(const VaultEntryInput& inp
     };
 
     vaultRepository_.save(entry);
+    auditService_.recordEvent(*session.userId, *session.username, "VAULT_ENTRY_CREATED", entry.title + " (" + entry.site + ")");
     return toView(entry);
 }
 
@@ -83,6 +86,7 @@ Result<VaultEntryView> VaultService::updateVaultEntry(const std::string& entryId
     updatedEntry.tags = input.tags;
 
     vaultRepository_.update(updatedEntry);
+    auditService_.recordEvent(*session.userId, *session.username, "VAULT_ENTRY_UPDATED", updatedEntry.title + " (" + updatedEntry.site + ")");
     return toView(updatedEntry);
 }
 
@@ -97,6 +101,7 @@ OperationResult VaultService::deleteVaultEntry(const std::string& entryId) {
         return {false, "Vault entry not found."};
     }
 
+    auditService_.recordEvent(*session.userId, *session.username, "VAULT_ENTRY_DELETED", entryId);
     return {true, "Vault entry deleted."};
 }
 
@@ -188,6 +193,7 @@ Result<std::vector<VaultEntryView>> VaultService::listEntries() const {
         decryptedEntries.push_back(*entryView.value);
     }
 
+    auditService_.recordEvent(*session.userId, *session.username, "VAULT_ENTRIES_VIEWED", "Listed vault entries.");
     return {true, "Vault entries loaded.", decryptedEntries};
 }
 

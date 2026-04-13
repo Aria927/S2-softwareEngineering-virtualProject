@@ -7,8 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(password_manager_backend
+    src/AdminService.cpp
+    src/AuditService.cpp
     src/AuthService.cpp
     src/CryptoService.cpp
+    src/MfaService.cpp
     src/SearchService.cpp
     src/VaultService.cpp
 )
