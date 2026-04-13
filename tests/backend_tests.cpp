@@ -13,6 +13,7 @@ using namespace password_manager_backend;
 
 namespace {
 
+// Keeps the test file dependency-free while still failing fast with readable messages.
 void expect(bool condition, const std::string& message) {
     if (!condition) {
         throw std::runtime_error(message);
@@ -20,6 +21,7 @@ void expect(bool condition, const std::string& message) {
 }
 
 void testRegistrationAndDuplicateValidation() {
+    // This test proves the backend validates inputs and does not keep account secrets in plaintext.
     InMemoryUserRepository userRepository;
     CryptoService cryptoService;
     AuthService authService(userRepository, cryptoService);
@@ -58,6 +60,7 @@ void testRegistrationAndDuplicateValidation() {
 }
 
 void testLoginUnlockAndLogout() {
+    // Login and vault unlock are tested separately because they represent two different security gates.
     InMemoryUserRepository userRepository;
     CryptoService cryptoService;
     AuthService authService(userRepository, cryptoService);
@@ -98,6 +101,7 @@ void testLoginUnlockAndLogout() {
 }
 
 void testVaultCrudAndSearch() {
+    // This covers the main backend flow the GUI will eventually call into.
     InMemoryUserRepository userRepository;
     InMemoryVaultRepository vaultRepository;
     CryptoService cryptoService;
@@ -174,6 +178,7 @@ void testVaultCrudAndSearch() {
 }  // namespace
 
 int main() {
+    // A tiny manual test runner keeps setup simple and portable for this student project.
     const std::vector<std::pair<std::string, std::function<void()>>> tests = {
         {"Registration and duplicate validation", testRegistrationAndDuplicateValidation},
         {"Login, unlock, and logout", testLoginUnlockAndLogout},

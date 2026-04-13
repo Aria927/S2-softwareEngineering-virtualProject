@@ -26,6 +26,7 @@ Result<VaultEntryView> VaultService::createVaultEntry(const VaultEntryInput& inp
         return {false, "You must unlock the vault before managing entries.", std::nullopt};
     }
 
+    // Plaintext is accepted only at the boundary, then encrypted before the entry is stored.
     const EncryptedBlob encryptedPassword =
         cryptoService_.encrypt(input.password, *session.activeEncryptionKey);
 
@@ -67,6 +68,7 @@ Result<VaultEntryView> VaultService::updateVaultEntry(const std::string& entryId
         return {false, "Vault entry not found.", std::nullopt};
     }
 
+    // Updating re-encrypts the password so the repository never receives plaintext secrets.
     const EncryptedBlob encryptedPassword =
         cryptoService_.encrypt(input.password, *session.activeEncryptionKey);
 
@@ -112,6 +114,7 @@ Result<std::vector<VaultEntryView>> VaultService::searchVaultEntries(const Searc
 }
 
 std::string VaultService::createIdentifier() {
+    // Entry IDs are generated here to keep repository contracts minimal and storage-agnostic.
     static constexpr char alphabet[] = "0123456789abcdef";
     std::random_device device;
     std::mt19937 generator(device());
@@ -125,6 +128,7 @@ std::string VaultService::createIdentifier() {
 }
 
 OperationResult VaultService::validateEntryInput(const VaultEntryInput& input) {
+    // Validation is intentionally lightweight and focused on fields the backend truly depends on.
     if (input.title.empty()) {
         return {false, "Entry title is required."};
     }
@@ -146,6 +150,7 @@ Result<VaultEntryView> VaultService::toView(const VaultEntry& entry) const {
         return {false, "The vault is locked.", std::nullopt};
     }
 
+    // Passwords are decrypted only when converting a stored entry into a GUI-facing view model.
     const EncryptedBlob encryptedPassword{
         entry.encryptedPassword,
         entry.encryptionSalt,
@@ -173,6 +178,7 @@ Result<std::vector<VaultEntryView>> VaultService::listEntries() const {
         return {false, "You must unlock the vault before viewing entries.", std::nullopt};
     }
 
+    // Entries remain encrypted in the repository; this method performs the unlock-time transformation for the GUI.
     std::vector<VaultEntryView> decryptedEntries;
     for (const auto& entry : vaultRepository_.findByUserId(*session.userId)) {
         auto entryView = toView(entry);

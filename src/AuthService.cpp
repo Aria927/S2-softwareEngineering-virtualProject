@@ -7,6 +7,7 @@
 namespace password_manager_backend {
 namespace {
 
+// Normalises basic text input before validation and lookup.
 std::string trim(const std::string& value) {
     const auto begin = std::find_if_not(value.begin(), value.end(), [](unsigned char character) {
         return std::isspace(character) != 0;
@@ -52,6 +53,7 @@ OperationResult AuthService::registerUser(const RegisterRequest& request) {
         return {false, "That email is already registered."};
     }
 
+    // Account and master secrets are stored independently because they serve different security roles.
     const std::string passwordSalt = cryptoService_.generateRandomBytes(16);
     const std::string masterPasswordSalt = cryptoService_.generateRandomBytes(16);
 
@@ -84,6 +86,7 @@ OperationResult AuthService::login(const LoginRequest& request) {
         return {false, "Invalid username or password."};
     }
 
+    // Logging in authenticates the user but intentionally keeps the vault locked until the master password is verified.
     session_ = SessionState{
         .isAuthenticated = true,
         .isVaultUnlocked = false,
@@ -121,6 +124,7 @@ OperationResult AuthService::verifyMasterPassword(const std::string& masterPassw
         return {false, "Master password verification failed."};
     }
 
+    // The active encryption key stays only in session memory so vault entries can be decrypted during the session.
     session_.isVaultUnlocked = true;
     session_.activeEncryptionKey = masterPassword;
     return {true, "Vault unlocked."};
@@ -131,6 +135,7 @@ const SessionState& AuthService::getSessionState() const {
 }
 
 std::string AuthService::createIdentifier() {
+    // A short hex identifier is enough for local object identity in this student project.
     static constexpr char alphabet[] = "0123456789abcdef";
     std::random_device device;
     std::mt19937 generator(device());
@@ -144,6 +149,7 @@ std::string AuthService::createIdentifier() {
 }
 
 bool AuthService::isStrongEnough(const std::string& secret) {
+    // This keeps validation intentionally simple; richer password rules can be added later without changing callers.
     return secret.size() >= 8;
 }
 

@@ -9,6 +9,7 @@
 namespace password_manager_backend {
 namespace {
 
+// Separate constants keep the security-sensitive values visible and easy to tune.
 constexpr std::size_t kHashLength = CC_SHA256_DIGEST_LENGTH;
 constexpr std::size_t kEncryptionKeyLength = kCCKeySizeAES256;
 constexpr std::size_t kIvLength = kCCBlockSizeAES128;
@@ -45,6 +46,7 @@ bool CryptoService::verifySecret(
 }
 
 EncryptedBlob CryptoService::encrypt(const std::string& plainText, const std::string& keyMaterial) const {
+    // Each encrypted password gets its own salt and IV so identical passwords do not produce identical stored values.
     const std::string salt = generateRandomBytes(16);
     const std::string iv = generateRandomBytes(kIvLength);
     const std::string encryptionKey = deriveVaultKey(keyMaterial, salt);
@@ -75,6 +77,7 @@ EncryptedBlob CryptoService::encrypt(const std::string& plainText, const std::st
 }
 
 std::string CryptoService::decrypt(const EncryptedBlob& blob, const std::string& keyMaterial) const {
+    // Decryption derives the same per-entry key using the stored salt and the active master password.
     const std::string encryptionKey = deriveVaultKey(keyMaterial, blob.salt);
     std::vector<char> plainBuffer(blob.cipherText.size() + kCCBlockSizeAES128);
     std::size_t bytesDecrypted = 0;
@@ -102,6 +105,7 @@ std::string CryptoService::pbkdf2Sha256(
     const std::string& salt,
     int rounds,
     std::size_t length) const {
+    // A derived byte string is returned directly because the backend stores and compares binary-safe strings internally.
     std::string derived(length, '\0');
 
     const int status = CCKeyDerivationPBKDF(

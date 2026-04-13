@@ -6,6 +6,7 @@
 
 namespace password_manager_backend {
 
+// Centralises hashing, key derivation, and encryption so security rules stay consistent.
 class CryptoService {
 public:
     std::string generateRandomBytes(std::size_t length) const;
@@ -17,6 +18,7 @@ public:
     std::string decrypt(const EncryptedBlob& blob, const std::string& keyMaterial) const;
 
 private:
+    // PBKDF2 is used both for stored secret hashes and for deriving encryption keys from the master password.
     std::string pbkdf2Sha256(
         const std::string& password,
         const std::string& salt,

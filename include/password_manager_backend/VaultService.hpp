@@ -7,6 +7,7 @@
 
 namespace password_manager_backend {
 
+// Coordinates vault operations and ensures only authenticated, unlocked sessions can access secrets.
 class VaultService {
 public:
     VaultService(
@@ -22,6 +23,7 @@ public:
     Result<std::vector<VaultEntryView>> searchVaultEntries(const SearchQuery& query) const;
 
 private:
+    // The backend owns entry identifiers so repository implementations can stay simple.
     static std::string createIdentifier();
     static OperationResult validateEntryInput(const VaultEntryInput& input);
     Result<VaultEntryView> toView(const VaultEntry& entry) const;

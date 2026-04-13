@@ -5,6 +5,7 @@
 
 namespace password_manager_backend {
 
+// Handles account lifecycle and session state, but does not know anything about GUI widgets or storage details.
 class AuthService {
 public:
     AuthService(UserRepository& userRepository, CryptoService& cryptoService);
@@ -16,6 +17,7 @@ public:
     const SessionState& getSessionState() const;
 
 private:
+    // IDs are generated in the backend so user creation does not depend on database-specific behaviour.
     static std::string createIdentifier();
     static bool isStrongEnough(const std::string& secret);
 

@@ -11,6 +11,7 @@
 
 namespace password_manager_backend {
 
+// Backend-facing contract for user storage. The database teammate can replace this implementation.
 class UserRepository {
 public:
     virtual ~UserRepository() = default;
@@ -21,6 +22,7 @@ public:
     virtual void save(const UserAccount& user) = 0;
 };
 
+// Backend-facing contract for vault entry persistence.
 class VaultRepository {
 public:
     virtual ~VaultRepository() = default;
@@ -32,6 +34,7 @@ public:
     virtual bool remove(const std::string& entryId, const std::string& userId) = 0;
 };
 
+// In-memory repository used for local testing before a real database is connected.
 class InMemoryUserRepository final : public UserRepository {
 public:
     std::optional<UserAccount> findByUsername(const std::string& username) const override {
@@ -70,6 +73,7 @@ private:
     std::unordered_map<std::string, std::string> emailToUsername_;
 };
 
+// In-memory vault storage that keeps backend development separate from database design work.
 class InMemoryVaultRepository final : public VaultRepository {
 public:
     void save(const VaultEntry& entry) override {
@@ -93,6 +97,7 @@ public:
             }
         }
 
+        // Sorting here gives the GUI a stable default ordering without pushing UI logic into the service layer.
         std::sort(entries.begin(), entries.end(), [](const VaultEntry& left, const VaultEntry& right) {
             return left.title < right.title;
         });
