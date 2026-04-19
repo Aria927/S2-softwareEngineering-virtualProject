@@ -32,6 +32,7 @@ void ofApp::setup() {
     editNameInput = false;
     editUserInput = false;
     editPassInput = false;
+    statusMessage = "";
 
     headerXLFont.load("Alfarn W05 Regular.otf", 56);
     headerLargeFont.load("Alfarn W05 Regular.otf", 50);
@@ -106,7 +107,7 @@ void ofApp::update() {
         searchString = "Search";
     }
     if (popupNameInput == false && popupName == "") {
-        popupName = "Username";
+        popupName = "App/Website Name";
     }
     if (popupPassInput == false && popupPass == "") {
         popupPass = "Password";
@@ -197,6 +198,11 @@ void ofApp::drawLoginScreen() {
     else {
         smallFont.drawString("Already have an account?", 745, 580);
     }
+
+    if (!statusMessage.empty()) {
+        ofSetColor(120, 120, 120);
+        smallFont.drawString(statusMessage, 740, createAccountScreen ? 535 : 470);
+    }
 }
 
 //--------------------------------------------------------------
@@ -250,6 +256,11 @@ void ofApp::drawMainScreen() {
     // title
     ofSetColor(255);
     headerMedFont.drawString("Password Manager", 640, 62);
+
+    if (!statusMessage.empty()) {
+        ofSetColor(225, 240, 255);
+        smallFont.drawString(statusMessage, 820, 62);
+    }
 
     // header bar
     ofSetColor(220, 220, 220);
@@ -415,14 +426,8 @@ void ofApp::keyPressed(int key) {
         else if (key == OF_KEY_RETURN) {
             // confirm inline edit on enter
             if (editingRow >= 0 && editingRow < filteredEntries.size()) {
-                filteredEntries[editingRow].appName = editName;
-                filteredEntries[editingRow].username = editUser;
-                filteredEntries[editingRow].password = editPass;
-                // sync back to entries
-                for (int i = 0; i < entries.size(); i++) {
-                    if (entries[i].appName == filteredEntries[editingRow].appName) {
-                        entries[i] = filteredEntries[editingRow];
-                    }
+                if (backendBridge.updateEntry(filteredEntries[editingRow].id, editName, editUser, editPass, statusMessage)) {
+                    updateFilter();
                 }
                 editingRow = -1;
                 editNameInput = false;
@@ -593,20 +598,36 @@ void ofApp::buttonEvent(string& label) {
         registerBtn.toggle(false); loginAccountBtn.toggle(false);
     }
     else if (label == "Login") {
-        // go to main screen
-        mainScreen = true;
-        loginBtn.toggle(false); createBtn.toggle(false);
-        registerBtn.toggle(false); loginAccountBtn.toggle(false);
-        updateFilter();
+        const string email = sanitiseField(Email, "Email Address");
+        const string password = sanitiseField(Password, "Password");
+
+        if (backendBridge.login(email, password, statusMessage)) {
+            mainScreen = true;
+            loginBtn.toggle(false); createBtn.toggle(false);
+            registerBtn.toggle(false); loginAccountBtn.toggle(false);
+            updateFilter();
+        }
+    }
+    else if (label == "Register") {
+        const string email = sanitiseField(Email, "Email Address");
+        const string password = sanitiseField(Password, "Password");
+        const string confirmation = sanitiseField(RePassword, "Re-enter Password");
+
+        if (backendBridge.registerAccount(email, password, confirmation, statusMessage)) {
+            createAccountScreen = false;
+            emailInput = false; passwordInput = false; rePasswordInput = false;
+            loginBtn.toggle(true); createBtn.toggle(true);
+            registerBtn.toggle(false); loginAccountBtn.toggle(false);
+            Password = "Password";
+            RePassword = "Re-enter Password";
+        }
     }
     else if (label == "Add") {
-        // add new entry
-        if (popupName != "App/Website Name" && popupName.size() > 0) {
-            PasswordEntry newEntry;
-            newEntry.appName = popupName;
-            newEntry.username = popupUser == "Username" ? "" : popupUser;
-            newEntry.password = popupPass == "Password" ? "" : popupPass;
-            entries.push_back(newEntry);
+        const string appName = sanitiseField(popupName, "App/Website Name");
+        const string username = sanitiseField(popupUser, "Username");
+        const string password = sanitiseField(popupPass, "Password");
+
+        if (backendBridge.addEntry(appName, username, password, statusMessage)) {
             updateFilter();
         }
         popupOpen = false;
@@ -624,24 +645,21 @@ void ofApp::buttonEvent(string& label) {
 
 //--------------------------------------------------------------
 void ofApp::updateFilter() {
-    filteredEntries.clear();
-    for (int i = 0; i < entries.size(); i++) {
-        if (searchString == "Search" || searchString.size() == 0) {
-            filteredEntries.push_back(entries[i]);
-        }
-        else {
-            // case-insensitive match on appName
-            string entryLower = entries[i].appName;
-            string searchLower = searchString;
-            for (int j = 0; j < entryLower.size(); j++) entryLower[j] = tolower(entryLower[j]);
-            for (int j = 0; j < searchLower.size(); j++) searchLower[j] = tolower(searchLower[j]);
-            if (entryLower.find(searchLower) != string::npos) {
-                filteredEntries.push_back(entries[i]);
-            }
-        }
-    }
+    const string query = (searchString == "Search") ? "" : searchString;
+    filteredEntries = backendBridge.searchEntries(query, statusMessage);
+    entries = backendBridge.getAllEntries(statusMessage);
+
     // reset passwordVisible to match new filtered list size
     passwordVisible.assign(filteredEntries.size(), false);
     scrollOffset = 0;
     editingRow = -1;
+}
+
+//--------------------------------------------------------------
+string ofApp::sanitiseField(const string& value, const string& placeholder) {
+    if (value == placeholder) {
+        return "";
+    }
+
+    return value;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "ofMain.h"
+#include "BackendBridge.h"
 #include "Button.h"
 #include "PasswordEntry.h"
 #include "ScrollBar.h"
@@ -23,6 +24,7 @@ public:
     ofTrueTypeFont headerXLFont, headerLargeFont, headerMedFont, smallFont, standardFont;
 
     Button loginBtn, createBtn, loginAccountBtn, registerBtn;
+    string statusMessage;
 
     // main screen
     bool mainScreen;
@@ -58,9 +60,11 @@ public:
     // header / layout rects
     ofRectangle topBar, headerBar;
     ofRectangle addNewBox;
+    BackendBridge backendBridge;
 
     // helpers
     void drawMainScreen();
     void drawLoginScreen();
     void updateFilter();
+    string sanitiseField(const string& value, const string& placeholder);
 };
