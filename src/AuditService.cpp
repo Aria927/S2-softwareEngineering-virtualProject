@@ -51,7 +51,13 @@ std::string AuditService::currentTimestamp() {
     const auto now = std::chrono::system_clock::now();
     const std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
     std::tm timeParts{};
+
+#if defined(_WIN32)
+    // Windows uses the secure localtime_s variant instead of localtime_r.
+    localtime_s(&timeParts, &nowTime);
+#else
     localtime_r(&nowTime, &timeParts);
+#endif
 
     std::ostringstream stream;
     stream << std::put_time(&timeParts, "%Y-%m-%d %H:%M:%S");
