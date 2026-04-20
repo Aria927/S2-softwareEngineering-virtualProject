@@ -81,6 +81,11 @@ void ofApp::setup() {
     popupCancelBtn.create("Cancel", 630, 470, 120, 45, 0xE0E0E0, &smallFont);
     popupCancelBtn.setCornerRadius(8);
     popupCancelBtn.toggle(false);
+    logoutBtn.create("Logout", 1110, 18, 140, 54, 0xFAFAFA, &smallFont);
+    logoutBtn.setCornerRadius(10);
+    logoutBtn.setTextColour(ofColor(80, 80, 80));
+    logoutBtn.setBorderColour(ofColor(255, 255, 255));
+    logoutBtn.toggle(false);
 
     popupBG.set(390, 240, 500, 290);
     popupNameBox.set(430, 280, 420, 50);
@@ -259,7 +264,7 @@ void ofApp::drawMainScreen() {
 
     if (!statusMessage.empty()) {
         ofSetColor(225, 240, 255);
-        smallFont.drawString(statusMessage, 820, 62);
+        smallFont.drawString(statusMessage, 640, 62);
     }
 
     // header bar
@@ -268,7 +273,7 @@ void ofApp::drawMainScreen() {
     ofSetColor(100, 100, 100);
     smallFont.drawString("App/Website Name", 160, 133);
     smallFont.drawString("Username", 560, 133);
-    smallFont.drawString("Password", 940, 133);
+    smallFont.drawString("Password", 900, 133);
 
     // scrollbar track area bg
     ofSetColor(220, 220, 220);
@@ -317,11 +322,11 @@ void ofApp::drawMainScreen() {
 
             // password — masked or visible
             if (i < passwordVisible.size() && passwordVisible[i] == true) {
-                smallFont.drawString(filteredEntries[i].password, 860, rowY + 50);
+                smallFont.drawString(filteredEntries[i].password, 820, rowY + 50);
             }
             else {
                 string masked = string(filteredEntries[i].password.size(), '*');
-                smallFont.drawString(masked, 860, rowY + 50);
+                smallFont.drawString(masked, 820, rowY + 50);
             }
         }
 
@@ -339,14 +344,26 @@ void ofApp::drawMainScreen() {
         ofDrawLine(15, rowY + 38, 24, rowY + 34);
         ofFill();
 
+        // bin icon
+        ofSetColor(120, 120, 120);
+        ofNoFill();
+        ofSetLineWidth(1.5);
+        ofDrawRectangle(1088, rowY + 17, 18, 20);
+        ofDrawLine(1085, rowY + 17, 1109, rowY + 17);
+        ofDrawLine(1094, rowY + 13, 1100, rowY + 13);
+        ofDrawLine(1094, rowY + 21, 1094, rowY + 33);
+        ofDrawLine(1097, rowY + 21, 1097, rowY + 33);
+        ofDrawLine(1100, rowY + 21, 1100, rowY + 33);
+        ofFill();
+
         // eye icon (right)
         ofSetColor(120, 120, 120);
         ofNoFill();
         ofSetLineWidth(1.5);
         // eye outline arc approximation
-        ofDrawLine(1170, rowY + 27, 1200, rowY + 27);
-        ofDrawEllipse(1185, rowY + 27, 36, 20);
-        ofDrawCircle(1185, rowY + 27, 6);
+        ofDrawLine(1160, rowY + 27, 1190, rowY + 27);
+        ofDrawEllipse(1175, rowY + 27, 36, 20);
+        ofDrawCircle(1175, rowY + 27, 6);
         ofFill();
     }
 
@@ -531,10 +548,13 @@ void ofApp::mousePressed(int x, int y, int button) {
     int rowIndex = (int)(adjustedY / rowHeight);
 
     if (rowIndex >= 0 && rowIndex < filteredEntries.size() && x < 1245 && y > 155) {
+        // Pencil opens inline editing, bin deletes, and eye reveals the password.
+        // Keeping each action in a fixed hit area makes the row easier to use.
         // pencil icon hit area (left side)
         ofRectangle pencilRect(5, 155 + rowIndex * rowHeight - scrollOffset + 10, 45, 45);
+        ofRectangle deleteRect(1078, 155 + rowIndex * rowHeight - scrollOffset + 10, 40, 40);
         // eye icon hit area (right side)
-        ofRectangle eyeRect(1160, 155 + rowIndex * rowHeight - scrollOffset + 10, 55, 40);
+        ofRectangle eyeRect(1150, 155 + rowIndex * rowHeight - scrollOffset + 10, 55, 40);
 
         if (pencilRect.inside(x, y)) {
             // start editing this row
@@ -549,6 +569,11 @@ void ofApp::mousePressed(int x, int y, int button) {
             editNameBox.set(50, rowY + 20, 350, 40);
             editUserBox.set(450, rowY + 20, 350, 40);
             editPassBox.set(845, rowY + 20, 350, 40);
+        }
+        else if (deleteRect.inside(x, y)) {
+            if (backendBridge.deleteEntry(filteredEntries[rowIndex].id, statusMessage)) {
+                updateFilter();
+            }
         }
         else if (eyeRect.inside(x, y)) {
             // toggle password visibility
@@ -605,6 +630,7 @@ void ofApp::buttonEvent(string& label) {
             mainScreen = true;
             loginBtn.toggle(false); createBtn.toggle(false);
             registerBtn.toggle(false); loginAccountBtn.toggle(false);
+            logoutBtn.toggle(true);
             updateFilter();
         }
     }
@@ -631,15 +657,20 @@ void ofApp::buttonEvent(string& label) {
             updateFilter();
         }
         popupOpen = false;
-        popupNameInput = false; popupUserInput = false; popupPassInput = false;
+        resetPopupFields();
         popupConfirmBtn.toggle(false);
         popupCancelBtn.toggle(false);
     }
     else if (label == "Cancel") {
         popupOpen = false;
-        popupNameInput = false; popupUserInput = false; popupPassInput = false;
+        resetPopupFields();
         popupConfirmBtn.toggle(false);
         popupCancelBtn.toggle(false);
+    }
+    else if (label == "Logout") {
+        if (backendBridge.logout(statusMessage)) {
+            resetToLoginScreen();
+        }
     }
 }
 
@@ -662,4 +693,48 @@ string ofApp::sanitiseField(const string& value, const string& placeholder) {
     }
 
     return value;
+}
+
+//--------------------------------------------------------------
+void ofApp::resetToLoginScreen() {
+    // Returning to a clean login state avoids leftover vault data remaining on screen after logout.
+    mainScreen = false;
+    createAccountScreen = false;
+    popupOpen = false;
+    searchInput = false;
+    emailInput = false;
+    passwordInput = false;
+    rePasswordInput = false;
+    editNameInput = false;
+    editUserInput = false;
+    editPassInput = false;
+    editingRow = -1;
+    scrollOffset = 0;
+
+    Email = "Email Address";
+    Password = "Password";
+    RePassword = "Re-enter Password";
+    searchString = "Search";
+
+    entries.clear();
+    filteredEntries.clear();
+    passwordVisible.clear();
+
+    loginBtn.toggle(true);
+    createBtn.toggle(true);
+    registerBtn.toggle(false);
+    loginAccountBtn.toggle(false);
+    logoutBtn.toggle(false);
+
+    resetPopupFields();
+}
+
+//--------------------------------------------------------------
+void ofApp::resetPopupFields() {
+    popupNameInput = false;
+    popupUserInput = false;
+    popupPassInput = false;
+    popupName = "App/Website Name";
+    popupUser = "Username";
+    popupPass = "Password";
 }

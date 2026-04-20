@@ -28,6 +28,7 @@ public:
 
     // main screen
     bool mainScreen;
+    Button logoutBtn;
 
     // search
     string searchString;
@@ -66,5 +67,7 @@ public:
     void drawMainScreen();
     void drawLoginScreen();
     void updateFilter();
+    void resetToLoginScreen();
+    void resetPopupFields();
     string sanitiseField(const string& value, const string& placeholder);
 };

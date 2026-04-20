@@ -57,6 +57,12 @@ bool BackendBridge::login(const std::string& email, const std::string& password,
     return unlockResult.success;
 }
 
+bool BackendBridge::logout(std::string& message) {
+    const auto result = authService_.logout();
+    message = result.message;
+    return result.success;
+}
+
 bool BackendBridge::addEntry(
     const std::string& appName,
     const std::string& username,
@@ -90,6 +96,12 @@ bool BackendBridge::updateEntry(
         .tags = {},
     });
 
+    message = result.message;
+    return result.success;
+}
+
+bool BackendBridge::deleteEntry(const std::string& entryId, std::string& message) {
+    const auto result = vaultService_.deleteVaultEntry(entryId);
     message = result.message;
     return result.success;
 }

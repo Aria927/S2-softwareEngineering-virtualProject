@@ -16,8 +16,10 @@ public:
 
     bool registerAccount(const std::string& email, const std::string& password, const std::string& confirmation, std::string& message);
     bool login(const std::string& email, const std::string& password, std::string& message);
+    bool logout(std::string& message);
     bool addEntry(const std::string& appName, const std::string& username, const std::string& password, std::string& message);
     bool updateEntry(const std::string& entryId, const std::string& appName, const std::string& username, const std::string& password, std::string& message);
+    bool deleteEntry(const std::string& entryId, std::string& message);
     std::vector<PasswordEntry> getAllEntries(std::string& message);
     std::vector<PasswordEntry> searchEntries(const std::string& query, std::string& message);
 

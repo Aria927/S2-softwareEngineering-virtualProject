@@ -1,5 +1,7 @@
 #include "ScrollBar.h"
 
+#include <algorithm>
+
 //--------------------------------------------------------------
 void ScrollBar::setup(float x, float y, float width, float height) {
     track.set(x, y, width, height);
@@ -52,6 +54,6 @@ float ScrollBar::mouseDragged(int x, int y, float contentHeight, float viewHeigh
     float delta = y - dragStartY;
     float newOffset = dragStartOffset + (delta / dragRange) * (contentHeight - viewHeight);
 
-    newOffset = max(0.0f, min(newOffset, contentHeight - viewHeight));
+    newOffset = std::max(0.0f, std::min(newOffset, contentHeight - viewHeight));
     return newOffset;
 }
