@@ -28,6 +28,24 @@ target_compile_options(password_manager_backend
         -Wpedantic
 )
 
+find_path(MYSQL_INCLUDE_DIR
+    NAMES mysql.h
+    PATHS
+        "C:/Program Files/MySQL/MySQL Server 8.0/include"
+)
+
+find_library(MYSQL_LIBRARY
+    NAMES libmysql mysqlclient
+    PATHS
+        "C:/Program Files/MySQL/MySQL Server 8.0/lib"
+)
+
+if (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
+    target_sources(password_manager_backend PRIVATE src/MySqlRepositories.cpp)
+    target_include_directories(password_manager_backend PRIVATE ${MYSQL_INCLUDE_DIR})
+    target_link_libraries(password_manager_backend PRIVATE ${MYSQL_LIBRARY})
+endif()
+
 add_executable(password_manager_backend_tests
     tests/backend_tests.cpp
 )

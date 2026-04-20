@@ -1,16 +1,114 @@
 #include "BackendBridge.h"
 
+#include <stdexcept>
+
 namespace {
 
 constexpr const char* kGuiRecoveryKey = "gui-integration-recovery-key";
 
 }
 
+GuiUserRepository::GuiUserRepository()
+    : implementation_(std::make_unique<password_manager_backend::InMemoryUserRepository>()) {}
+
+void GuiUserRepository::useImplementation(std::unique_ptr<password_manager_backend::UserRepository> implementation) {
+    implementation_ = std::move(implementation);
+}
+
+std::optional<password_manager_backend::UserAccount> GuiUserRepository::findByUsername(const std::string& username) const {
+    return implementation_->findByUsername(username);
+}
+
+std::optional<password_manager_backend::UserAccount> GuiUserRepository::findByEmail(const std::string& email) const {
+    return implementation_->findByEmail(email);
+}
+
+std::optional<password_manager_backend::UserAccount> GuiUserRepository::findById(const std::string& id) const {
+    return implementation_->findById(id);
+}
+
+std::vector<password_manager_backend::UserAccount> GuiUserRepository::listAll() const {
+    return implementation_->listAll();
+}
+
+void GuiUserRepository::save(const password_manager_backend::UserAccount& user) {
+    implementation_->save(user);
+}
+
+void GuiUserRepository::update(const password_manager_backend::UserAccount& user) {
+    implementation_->update(user);
+}
+
+GuiVaultRepository::GuiVaultRepository()
+    : implementation_(std::make_unique<password_manager_backend::InMemoryVaultRepository>()) {}
+
+void GuiVaultRepository::useImplementation(std::unique_ptr<password_manager_backend::VaultRepository> implementation) {
+    implementation_ = std::move(implementation);
+}
+
+void GuiVaultRepository::save(const password_manager_backend::VaultEntry& entry) {
+    implementation_->save(entry);
+}
+
+std::optional<password_manager_backend::VaultEntry> GuiVaultRepository::findById(const std::string& entryId) const {
+    return implementation_->findById(entryId);
+}
+
+std::vector<password_manager_backend::VaultEntry> GuiVaultRepository::findByUserId(const std::string& userId) const {
+    return implementation_->findByUserId(userId);
+}
+
+void GuiVaultRepository::update(const password_manager_backend::VaultEntry& entry) {
+    implementation_->update(entry);
+}
+
+bool GuiVaultRepository::remove(const std::string& entryId, const std::string& userId) {
+    return implementation_->remove(entryId, userId);
+}
+
+GuiAuditRepository::GuiAuditRepository()
+    : implementation_(std::make_unique<password_manager_backend::InMemoryAuditRepository>()) {}
+
+void GuiAuditRepository::useImplementation(std::unique_ptr<password_manager_backend::AuditRepository> implementation) {
+    implementation_ = std::move(implementation);
+}
+
+void GuiAuditRepository::save(const password_manager_backend::AuditEvent& event) {
+    implementation_->save(event);
+}
+
+std::vector<password_manager_backend::AuditEvent> GuiAuditRepository::listAll() const {
+    return implementation_->listAll();
+}
+
+std::vector<password_manager_backend::AuditEvent> GuiAuditRepository::listByUserId(const std::string& userId) const {
+    return implementation_->listByUserId(userId);
+}
+
 BackendBridge::BackendBridge()
     : mfaService_(cryptoService_),
       auditService_(auditRepository_),
       authService_(userRepository_, cryptoService_, mfaService_, auditService_, kGuiRecoveryKey),
-      vaultService_(vaultRepository_, authService_, cryptoService_, searchService_, auditService_) {}
+      vaultService_(vaultRepository_, authService_, cryptoService_, searchService_, auditService_) {
+    if (!password_manager_backend::MySqlConnectionConfig::isEnabledFromEnvironment()) {
+        return;
+    }
+
+    try {
+        auto configuration = password_manager_backend::MySqlConnectionConfig::fromEnvironment();
+        mySqlDatabase_ = std::make_shared<password_manager_backend::MySqlDatabase>(std::move(configuration));
+
+        userRepository_.useImplementation(
+            std::make_unique<password_manager_backend::MySqlUserRepository>(mySqlDatabase_));
+        vaultRepository_.useImplementation(
+            std::make_unique<password_manager_backend::MySqlVaultRepository>(mySqlDatabase_));
+        auditRepository_.useImplementation(
+            std::make_unique<password_manager_backend::MySqlAuditRepository>(mySqlDatabase_));
+    } catch (const std::exception&) {
+        // The GUI keeps its in-memory fallback so the app still runs on machines without working MySQL credentials.
+        mySqlDatabase_.reset();
+    }
+}
 
 bool BackendBridge::registerAccount(
     const std::string& email,
