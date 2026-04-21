@@ -92,6 +92,24 @@ void ofApp::setup() {
     popupUserBox.set(430, 345, 420, 50);
     popupPassBox.set(430, 410, 420, 50);
 
+    editPopupOpen = false;
+    editingRow = -1;
+    editNameInput = false;
+    editUserInput = false;
+    editPassInput = false;
+
+    editPopupBG.set(390, 240, 500, 290);
+    editNameBox.set(430, 280, 420, 50);
+    editUserBox.set(430, 345, 420, 50);
+    editPassBox.set(430, 410, 420, 50);
+
+    editConfirmBtn.create("Save", 490, 470, 120, 45, 0x1380F0, &smallFont);
+    editConfirmBtn.setCornerRadius(8);
+    editConfirmBtn.toggle(false);
+    editCancelBtn.create("Discard", 630, 470, 120, 45, 0xE0E0E0, &smallFont);
+    editCancelBtn.setCornerRadius(8);
+    editCancelBtn.toggle(false);
+
     scrollBar.setup(1245, 155, 35, 565);
 
     ofAddListener(Button::buttonEvent, this, &ofApp::buttonEvent);
@@ -409,6 +427,44 @@ void ofApp::drawMainScreen() {
         smallFont.drawString(popupUser, 440, 378);
         smallFont.drawString(popupPass, 440, 443);
     }
+
+    // edit popup overlay
+    if (editPopupOpen == true) {
+        ofSetColor(0, 0, 0, 120);
+        ofDrawRectangle(0, 0, 1280, 720);
+
+        ofSetColor(245, 245, 245);
+        ofDrawRectRounded(editPopupBG, 12);
+
+        ofSetColor(51, 51, 51);
+        smallFont.drawString("Edit Entry", 575, 270);
+
+        if (editNameInput == false) { ofSetColor(230, 230, 230); }
+        else { ofSetColor(255, 255, 255); }
+        ofDrawRectRounded(editNameBox, 8);
+
+        if (editUserInput == false) { ofSetColor(230, 230, 230); }
+        else { ofSetColor(255, 255, 255); }
+        ofDrawRectRounded(editUserBox, 8);
+
+        if (editPassInput == false) { ofSetColor(230, 230, 230); }
+        else { ofSetColor(255, 255, 255); }
+        ofDrawRectRounded(editPassBox, 8);
+
+        ofNoFill();
+        ofSetLineWidth(1);
+        ofSetColor(198, 198, 198);
+        ofDrawRectRounded(editNameBox, 8);
+        ofDrawRectRounded(editUserBox, 8);
+        ofDrawRectRounded(editPassBox, 8);
+        ofFill();
+
+        ofSetColor(50, 50, 50);
+        smallFont.drawString(editName, 440, 313);
+        smallFont.drawString(editUser, 440, 378);
+        smallFont.drawString(editPass, 440, 443);
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -439,18 +495,6 @@ void ofApp::keyPressed(int key) {
             else if (editNameInput && editName.size() > 0) editName.pop_back();
             else if (editUserInput && editUser.size() > 0) editUser.pop_back();
             else if (editPassInput && editPass.size() > 0) editPass.pop_back();
-        }
-        else if (key == OF_KEY_RETURN) {
-            // confirm inline edit on enter
-            if (editingRow >= 0 && editingRow < filteredEntries.size()) {
-                if (backendBridge.updateEntry(filteredEntries[editingRow].id, editName, editUser, editPass, statusMessage)) {
-                    updateFilter();
-                }
-                editingRow = -1;
-                editNameInput = false;
-                editUserInput = false;
-                editPassInput = false;
-            }
         }
         else if (key >= 32 && key < 128) {
             if (searchInput) { searchString += (char)key; updateFilter(); }
@@ -503,43 +547,66 @@ void ofApp::mousePressed(int x, int y, int button) {
     }
 
     // main screen clicks
+    // edit popup clicks
+    if (editPopupOpen == true) {
+        if (editNameBox.inside(x, y) && editNameInput == false) {
+            editNameInput = true;
+            editUserInput = false;
+            editPassInput = false;
+        }
+        else if (editUserBox.inside(x, y) && editUserInput == false) {
+            editUserInput = true;
+            editNameInput = false;
+            editPassInput = false;
+        }
+        else if (editPassBox.inside(x, y) && editPassInput == false) {
+            editPassInput = true;
+            editNameInput = false;
+            editUserInput = false;
+        }
+        else if (!editNameBox.inside(x, y) && !editUserBox.inside(x, y) && !editPassBox.inside(x, y)) {
+            editNameInput = false;
+            editUserInput = false;
+            editPassInput = false;
+        }
+        return;
+    }
+
+    // add popup clicks
     if (popupOpen == true) {
         if (popupNameBox.inside(x, y) && popupNameInput == false) {
             popupNameInput = true;
             popupUserInput = false;
-            popupPassInput = false; 
+            popupPassInput = false;
 
             if (popupName == "App/Website Name") {
                 popupName = "";
             }
-            
         }
         else if (popupUserBox.inside(x, y) && popupUserInput == false) {
             popupUserInput = true;
             popupNameInput = false;
             popupPassInput = false;
-            
+
             if (popupUser == "Username") {
                 popupUser = "";
             }
-           
         }
         else if (popupPassBox.inside(x, y) && popupPassInput == false) {
             popupPassInput = true;
             popupNameInput = false;
-            popupUserInput = false; 
-            
+            popupUserInput = false;
+
             if (popupPass == "Password") {
                 popupPass = "";
             }
-            
         }
         else if (!popupNameBox.inside(x, y) && !popupUserBox.inside(x, y) && !popupPassBox.inside(x, y)) {
             popupNameInput = false;
             popupUserInput = false;
             popupPassInput = false;
         }
-        return; // block clicks behind popup
+        return;
     }
 
     // search box
@@ -564,58 +631,30 @@ void ofApp::mousePressed(int x, int y, int button) {
     float contentH = filteredEntries.size() * rowHeight;
     scrollBar.mousePressed(x, y, contentH, 565, scrollOffset);
 
-    // row interactions — adjust y for scroll offset
+    // row interactions
     float adjustedY = y + scrollOffset - 155;
     int rowIndex = (int)(adjustedY / rowHeight);
 
     if (rowIndex >= 0 && rowIndex < filteredEntries.size() && x < 1245 && y > 155) {
-        // Pencil opens inline editing, bin deletes, and eye reveals the password.
-        // Keeping each action in a fixed hit area makes the row easier to use.
-        // pencil icon hit area (left side)
         ofRectangle pencilRect(5, 155 + rowIndex * rowHeight - scrollOffset + 10, 45, 45);
-        ofRectangle deleteRect(1078, 155 + rowIndex * rowHeight - scrollOffset + 10, 40, 40);
-        // eye icon hit area (right side)
-        ofRectangle eyeRect(1150, 155 + rowIndex * rowHeight - scrollOffset + 10, 55, 40);
+        ofRectangle eyeRect(1160, 155 + rowIndex * rowHeight - scrollOffset + 10, 55, 40);
 
         if (pencilRect.inside(x, y)) {
-            // start editing this row
+            // open edit popup pre-filled with this row's data
             editingRow = rowIndex;
             editName = filteredEntries[rowIndex].appName;
             editUser = filteredEntries[rowIndex].username;
             editPass = filteredEntries[rowIndex].password;
-            editNameInput = true;
+            editNameInput = false;
             editUserInput = false;
             editPassInput = false;
-            float rowY = 155 + rowIndex * rowHeight - scrollOffset;
-            editNameBox.set(50, rowY + 20, 350, 40);
-            editUserBox.set(450, rowY + 20, 350, 40);
-            editPassBox.set(845, rowY + 20, 350, 40);
-        }
-        else if (deleteRect.inside(x, y)) {
-            if (backendBridge.deleteEntry(filteredEntries[rowIndex].id, statusMessage)) {
-                updateFilter();
-            }
+            editPopupOpen = true;
+            editConfirmBtn.toggle(true);
+            editCancelBtn.toggle(true);
         }
         else if (eyeRect.inside(x, y)) {
-            // toggle password visibility
             while (passwordVisible.size() <= rowIndex) passwordVisible.push_back(false);
             passwordVisible[rowIndex] = !passwordVisible[rowIndex];
-        }
-        else if (editingRow == rowIndex) {
-            // switch focus between edit boxes
-            if (editNameBox.inside(x, y + scrollOffset - 155 + 155)) { // re-check with scroll
-                editNameInput = true; editUserInput = false; editPassInput = false;
-            }
-            else if (editUserBox.inside(x, y + scrollOffset - 155 + 155)) {
-                editNameInput = false; editUserInput = true; editPassInput = false;
-            }
-            else if (editPassBox.inside(x, y + scrollOffset - 155 + 155)) {
-                editNameInput = false; editUserInput = false; editPassInput = true;
-            }
-        }
-        else {
-            editingRow = -1;
-            editNameInput = false; editUserInput = false; editPassInput = false;
         }
     }
 }
@@ -693,16 +732,51 @@ void ofApp::buttonEvent(string& label) {
             resetToLoginScreen();
         }
     }
+    else if (label == "Save") {
+        if (editingRow >= 0 && editingRow < filteredEntries.size()) {
+            filteredEntries[editingRow].appName = editName;
+            filteredEntries[editingRow].username = editUser;
+            filteredEntries[editingRow].password = editPass;
+            for (int i = 0; i < entries.size(); i++) {
+                if (entries[i].appName == filteredEntries[editingRow].appName) {
+                    entries[i] = filteredEntries[editingRow];
+                }
+            }
+        }
+        editPopupOpen = false;
+        editingRow = -1;
+        editNameInput = false; editUserInput = false; editPassInput = false;
+        editConfirmBtn.toggle(false);
+        editCancelBtn.toggle(false);
+    }
+    else if (label == "Discard") {
+        editPopupOpen = false;
+        editingRow = -1;
+        editNameInput = false; editUserInput = false; editPassInput = false;
+        editConfirmBtn.toggle(false);
+        editCancelBtn.toggle(false);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::updateFilter() {
-    const string query = (searchString == "Search") ? "" : searchString;
-    filteredEntries = backendBridge.searchEntries(query, statusMessage);
-    entries = backendBridge.getAllEntries(statusMessage);
-
-    // reset passwordVisible to match new filtered list size
-    passwordVisible.assign(filteredEntries.size(), false);
+    filteredEntries.clear();
+    for (int i = 0; i < entries.size(); i++) {
+        if (searchString == "Search" || searchString.size() == 0) {
+            filteredEntries.push_back(entries[i]);
+        }
+        else {
+            string entryLower = entries[i].appName;
+            string searchLower = searchString;
+            for (int j = 0; j < entryLower.size(); j++) entryLower[j] = tolower(entryLower[j]);
+            for (int j = 0; j < searchLower.size(); j++) searchLower[j] = tolower(searchLower[j]);
+            if (entryLower.find(searchLower) != string::npos) {
+                filteredEntries.push_back(entries[i]);
+            }
+        }
+    }
+    // sync passwordVisible to entries size, preserving existing values
+    while (passwordVisible.size() < entries.size()) passwordVisible.push_back(false);
     scrollOffset = 0;
     editingRow = -1;
 }

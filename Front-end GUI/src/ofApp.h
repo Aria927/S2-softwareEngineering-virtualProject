@@ -51,12 +51,14 @@ public:
     float rowHeight;
     ScrollBar scrollBar;
 
-    // per-row state (indexed by filteredEntries position)
-    vector<bool> passwordVisible;
-    int editingRow; // -1 if none
+    // edit popup
+    vector<bool> passwordVisible; // indexed by entries, not filteredEntries
+    bool editPopupOpen;
+    int editingRow;
     string editName, editUser, editPass;
     bool editNameInput, editUserInput, editPassInput;
-    ofRectangle editNameBox, editUserBox, editPassBox;
+    ofRectangle editPopupBG, editNameBox, editUserBox, editPassBox;
+    Button editConfirmBtn, editCancelBtn;
 
     // header / layout rects
     ofRectangle topBar, headerBar;
