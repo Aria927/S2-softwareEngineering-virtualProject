@@ -1,38 +1,38 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\",
+  "WorkspaceRootPath": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ofApp.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ofApp.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|solutionrelative:src\\ofApp.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ofApp.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ofApp.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|solutionrelative:src\\ofApp.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ScrollBar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|solutionrelative:src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ScrollBar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|solutionrelative:src\\ScrollBar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ScrollBar.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ScrollBar.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|solutionrelative:src\\ScrollBar.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\PasswordEntry.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\PasswordEntry.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|solutionrelative:src\\PasswordEntry.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\Button.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\Button.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|solutionrelative:src\\Button.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\Button.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\Button.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Button.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7FD42DF7-442E-479A-BA76-D0022F99702A}|Password Manager.vcxproj|solutionrelative:src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,26 +46,27 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 2,
               "Title": "main.cpp",
-              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\main.cpp",
+              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\main.cpp",
               "RelativeDocumentMoniker": "src\\main.cpp",
-              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\main.cpp",
+              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\main.cpp",
               "RelativeToolTip": "src\\main.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-13T14:23:37.077Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "ofApp.h",
-              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ofApp.h",
+              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ofApp.h",
               "RelativeDocumentMoniker": "src\\ofApp.h",
-              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ofApp.h",
+              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ofApp.h",
               "RelativeToolTip": "src\\ofApp.h",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAAABYAAABAAAAAAAAAAA==",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAAABcAAABkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-04-13T14:23:38.841Z",
               "IsPinned": true,
@@ -83,35 +84,34 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "ofApp.cpp",
-              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ofApp.cpp",
+              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ofApp.cpp",
               "RelativeDocumentMoniker": "src\\ofApp.cpp",
-              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ofApp.cpp",
+              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ofApp.cpp",
               "RelativeToolTip": "src\\ofApp.cpp",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAACYAAAA7AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAJEAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-13T20:19:54.898Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "ScrollBar.cpp",
-              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ScrollBar.cpp",
+              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ScrollBar.cpp",
               "RelativeDocumentMoniker": "src\\ScrollBar.cpp",
-              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ScrollBar.cpp",
+              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ScrollBar.cpp",
               "RelativeToolTip": "src\\ScrollBar.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-17T11:58:36.967Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-17T11:58:36.967Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ScrollBar.h",
-              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ScrollBar.h",
+              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ScrollBar.h",
               "RelativeDocumentMoniker": "src\\ScrollBar.h",
-              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\ScrollBar.h",
+              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\ScrollBar.h",
               "RelativeToolTip": "src\\ScrollBar.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -119,11 +119,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "PasswordEntry.h",
-              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\PasswordEntry.h",
+              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\PasswordEntry.h",
               "RelativeDocumentMoniker": "src\\PasswordEntry.h",
-              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\PasswordEntry.h",
+              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\PasswordEntry.h",
               "RelativeToolTip": "src\\PasswordEntry.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -131,11 +131,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Button.cpp",
-              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\Button.cpp",
+              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\Button.cpp",
               "RelativeDocumentMoniker": "src\\Button.cpp",
-              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\Button.cpp",
+              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\Button.cpp",
               "RelativeToolTip": "src\\Button.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAFMAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
@@ -143,11 +143,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Button.h",
-              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\Button.h",
+              "DocumentMoniker": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\Button.h",
               "RelativeDocumentMoniker": "src\\Button.h",
-              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Software Engineering\\Password Manager\\src\\Button.h",
+              "ToolTip": "C:\\Users\\tommy\\OneDrive - Bath Spa University\\Physical Computing\\S2-softwareEngineering-virtualProject\\Front-end GUI\\src\\Button.h",
               "RelativeToolTip": "src\\Button.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACsAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",

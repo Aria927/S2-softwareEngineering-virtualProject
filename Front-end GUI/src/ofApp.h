@@ -21,7 +21,7 @@ public:
     bool createAccountScreen;
 
     ofRectangle loginScreenBG, emailBox, passwordBox, rePasswordBox;
-    ofTrueTypeFont headerXLFont, headerLargeFont, headerMedFont, smallFont, standardFont;
+    ofTrueTypeFont headerXLFont, headerLargeFont, headerMedFont, smallFont, standardFont, headerFont;
 
     Button loginBtn, createBtn, loginAccountBtn, registerBtn;
     string statusMessage;

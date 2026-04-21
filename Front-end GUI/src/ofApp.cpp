@@ -38,8 +38,8 @@ void ofApp::setup() {
     headerLargeFont.load("Alfarn W05 Regular.otf", 50);
     headerMedFont.load("Alfarn W05 Regular.otf", 40);
     standardFont.load("Antarctican_Headline_Book.otf", 43);
+    headerFont.load("Antarctican_Headline_Book.otf", 27);
     smallFont.load("Antarctican_Headline_Book.otf", 23);
-
 
     // login screen
     loginScreenBG.set(0, 0, 580, 720);
@@ -72,7 +72,7 @@ void ofApp::setup() {
     topBar.set(0, 0, 1280, 90);
     headerBar.set(0, 90, 1245, 65);
     searchBox.set(20, 18, 300, 54);
-    addNewBox.set(358, 18, 200, 54);
+    addNewBox.set(348, 18, 140, 54);
 
     // main screen buttons
     popupConfirmBtn.create("Add", 490, 470, 120, 45, 0x1380F0, &smallFont);
@@ -81,10 +81,10 @@ void ofApp::setup() {
     popupCancelBtn.create("Cancel", 630, 470, 120, 45, 0xE0E0E0, &smallFont);
     popupCancelBtn.setCornerRadius(8);
     popupCancelBtn.toggle(false);
-    logoutBtn.create("Logout", 1110, 18, 140, 54, 0xFAFAFA, &smallFont);
+    logoutBtn.create("Logout", 1155, 23, 90, 44, 0xFAFAFA, &smallFont);
     logoutBtn.setCornerRadius(10);
     logoutBtn.setTextColour(ofColor(80, 80, 80));
-    logoutBtn.setBorderColour(ofColor(255, 255, 255));
+    logoutBtn.setBorderColour(ofColor(198, 198, 198));
     logoutBtn.toggle(false);
 
     popupBG.set(390, 240, 500, 290);
@@ -113,6 +113,9 @@ void ofApp::update() {
     }
     if (popupNameInput == false && popupName == "") {
         popupName = "App/Website Name";
+    }
+    if (popupPassUser == false && popupUser == "") {
+        popupUser = "Username";
     }
     if (popupPassInput == false && popupPass == "") {
         popupPass = "Password";
@@ -219,18 +222,17 @@ void ofApp::drawMainScreen() {
     ofDrawRectangle(topBar);
 
     // search box
-    if (searchInput == false) { ofSetColor(200, 220, 245); }
-    else { ofSetColor(255, 255, 255); }
+    if (searchInput == false) { ofSetColor(230, 230, 230); }
+    else { ofSetColor(250, 250, 250); }
     ofDrawRectRounded(searchBox, 10);
     ofNoFill();
     ofSetLineWidth(1.5);
-    ofSetColor(255, 255, 255);
+    ofSetColor(198, 198, 198);
     ofDrawRectRounded(searchBox, 10);
     ofFill();
-    ofSetColor(searchInput ? 30 : 180, searchInput ? 30 : 180, searchInput ? 30 : 180);
+    ofSetColor(160, 160, 160);
     smallFont.drawString(searchString, 35, 53);
     // search icon (simple circle + line)
-    ofSetColor(200, 220, 245);
     ofNoFill();
     ofSetLineWidth(2.5);
     ofDrawCircle(288, 44, 12);
@@ -239,28 +241,26 @@ void ofApp::drawMainScreen() {
     ofFill();
 
     // add new box
-    ofSetColor(200, 220, 245);
+    ofSetColor(250, 250, 250);
     ofDrawRectRounded(addNewBox, 10);
     ofNoFill();
     ofSetLineWidth(1.5);
-    ofSetColor(255, 255, 255);
+    ofSetColor(198, 198, 198);
     ofDrawRectRounded(addNewBox, 10);
     ofFill();
-    ofSetColor(200, 220, 245);
-    smallFont.drawString("Add New", 375, 53);
+    ofSetColor(80, 80, 80);
+    smallFont.drawString("Add New", 365, 53);
     // + icon
-    ofSetColor(200, 220, 245);
     ofSetLineWidth(2.5);
     ofNoFill();
-    ofDrawCircle(533, 44, 12);
+    ofDrawCircle(463, 44, 12);
     ofFill();
-    ofSetColor(200, 220, 245);
-    ofDrawLine(533, 35, 533, 53);
-    ofDrawLine(524, 44, 542, 44);
+    ofDrawLine(463, 35, 463, 53);
+    ofDrawLine(454, 44, 472, 44);
 
     // title
     ofSetColor(255);
-    headerMedFont.drawString("Password Manager", 640, 62);
+    headerMedFont.drawString("Password Manager", 520, 62);
 
     if (!statusMessage.empty()) {
         ofSetColor(225, 240, 255);
@@ -268,15 +268,15 @@ void ofApp::drawMainScreen() {
     }
 
     // header bar
-    ofSetColor(220, 220, 220);
+    ofSetColor(230, 230, 230);
     ofDrawRectangle(headerBar);
-    ofSetColor(100, 100, 100);
-    smallFont.drawString("App/Website Name", 160, 133);
-    smallFont.drawString("Username", 560, 133);
-    smallFont.drawString("Password", 900, 133);
+    ofSetColor(80, 80, 80);
+    headerFont.drawString("App/Website Name", 160, 133);
+    headerFont.drawString("Username", 560, 133);
+    headerFont.drawString("Password", 900, 133);
 
     // scrollbar track area bg
-    ofSetColor(220, 220, 220);
+    ofSetColor(230, 230, 230);
     ofDrawRectangle(1245, 155, 35, 565);
 
     // clip rows to view area
@@ -382,7 +382,7 @@ void ofApp::drawMainScreen() {
         ofDrawRectRounded(popupBG, 12);
 
         ofSetColor(51, 51, 51);
-        smallFont.drawString("Add New Entry", 540, 270);
+        smallFont.drawString("Add New Entry", 575, 270);
 
         if (popupNameInput == false) { ofSetColor(230, 230, 230); }
         else { ofSetColor(255, 255, 255); }
@@ -505,13 +505,34 @@ void ofApp::mousePressed(int x, int y, int button) {
     // main screen clicks
     if (popupOpen == true) {
         if (popupNameBox.inside(x, y) && popupNameInput == false) {
-            popupNameInput = true; popupName = "";
+            popupNameInput = true;
+            popupUserInput = false;
+            popupPassInput = false; 
+
+            if (popupName == "App/Website Name") {
+                popupName = "";
+            }
+            
         }
         else if (popupUserBox.inside(x, y) && popupUserInput == false) {
-            popupUserInput = true; popupUser = "";
+            popupUserInput = true;
+            popupNameInput = false;
+            popupPassInput = false;
+            
+            if (popupUser == "Username") {
+                popupUser = "";
+            }
+           
         }
         else if (popupPassBox.inside(x, y) && popupPassInput == false) {
-            popupPassInput = true; popupPass = "";
+            popupPassInput = true;
+            popupNameInput = false;
+            popupUserInput = false; 
+            
+            if (popupPass == "Password") {
+                popupPass = "";
+            }
+            
         }
         else if (!popupNameBox.inside(x, y) && !popupUserBox.inside(x, y) && !popupPassBox.inside(x, y)) {
             popupNameInput = false;
