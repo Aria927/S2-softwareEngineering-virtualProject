@@ -1,6 +1,6 @@
 # Password Manager Backend
 
-This repository currently contains the backend service layer for a local desktop password manager written in C++. It is designed to be called by a future GUI and connected to a future database implementation, while already providing the main business logic and security behaviour for the application.
+This repository contains the backend service layer for a local desktop password manager written in C++. It is now also wired into the openFrameworks GUI project, and it can run either with temporary in-memory storage or with a MySQL-backed repository implementation.
 
 ## Current backend features
 - User registration with duplicate checks and basic password-strength validation.
@@ -31,14 +31,29 @@ This repository currently contains the backend service layer for a local desktop
 
 ## Current project state
 - The backend logic is implemented and covered by automated tests.
-- The current repository still uses in-memory repository implementations for development and testing.
-- There is not yet a real database layer, so data does not persist after the program exits.
-- There is not yet a GUI, so this is not a finished user-facing desktop app.
+- The GUI project is integrated with the backend service layer for login, registration, vault CRUD, search, delete, and logout.
+- The app still defaults to in-memory storage unless MySQL mode is explicitly enabled.
+- A MySQL-backed repository implementation is included for users, vault entries, tags, and audit events.
+- The MySQL schema in [`Database/script.txt`](Database/script.txt) extends the original team database draft so it matches the backend models already used by the app.
 
 ## Team boundaries
 - Backend owns service logic, validation, session state, encryption rules, MFA flow, admin rules, and audit logging.
 - Database implementation should provide concrete implementations of `UserRepository`, `VaultRepository`, and `AuditRepository`.
 - GUI implementation should call the backend services and display the returned results or errors to the user.
+
+## MySQL mode
+The GUI continues to work without a database by using in-memory storage. To enable MySQL persistence, set these environment variables before launching the app:
+
+```powershell
+$env:PM_STORAGE = "mysql"
+$env:PM_DB_HOST = "127.0.0.1"
+$env:PM_DB_PORT = "3306"
+$env:PM_DB_NAME = "passwordManager"
+$env:PM_DB_USER = "root"
+$env:PM_DB_PASSWORD = "your-password-here"
+```
+
+When MySQL mode is enabled, the app will connect to the configured server, create the database if needed, and ensure the integrated schema exists. If MySQL mode is not enabled, the app falls back to in-memory storage.
 
 ## Build and test
 ```bash

@@ -1,177 +1,73 @@
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- DATABASE
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+-- Integrated MySQL schema for the password manager.
+-- This keeps the MySQL direction from the database teammate's draft,
+-- while extending the tables so they match the backend models already in this repo.
 
 CREATE DATABASE IF NOT EXISTS passwordManager;
 USE passwordManager;
 
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- user TABLE
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-
-CREATE TABLE user (
--- Primary Key
-	userID INT AUTO_INCREMENT PRIMARY KEY,
-
--- User email for login
-	email VARCHAR(255) UNIQUE NOT NULL,
-
--- Stored hashed password, Never plainVARBINARY(255)
-	passwordHash VARCHAR(255) NOT NULL,
-
--- Salt used for key derivation function (KDF)
-	KDFsalt VARBINARY(255) NOT NULL,
-
--- Account creation timestamp
-	createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS users (
+    local_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    app_user_id VARCHAR(24) NOT NULL UNIQUE,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash LONGTEXT NOT NULL,
+    password_salt TEXT NOT NULL,
+    master_password_hash LONGTEXT NOT NULL,
+    master_password_salt TEXT NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    mfa_enabled TINYINT(1) NOT NULL DEFAULT 0,
+    mfa_ciphertext LONGTEXT NULL,
+    mfa_salt TEXT NULL,
+    mfa_iv TEXT NULL,
+    master_wrapped_vault_key LONGTEXT NOT NULL,
+    master_wrapped_vault_key_salt TEXT NOT NULL,
+    master_wrapped_vault_key_iv TEXT NOT NULL,
+    password_wrapped_vault_key LONGTEXT NOT NULL,
+    password_wrapped_vault_key_salt TEXT NOT NULL,
+    password_wrapped_vault_key_iv TEXT NOT NULL,
+    recovery_wrapped_vault_key LONGTEXT NOT NULL,
+    recovery_wrapped_vault_key_salt TEXT NOT NULL,
+    recovery_wrapped_vault_key_iv TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- VAULT TABLE
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-
-CREATE TABLE vault (
--- Primary Key
-	vaultID INT AUTO_INCREMENT PRIMARY KEY,
-
--- Foreign Key
-	userID INT NOT NULL,
-
--- Encrypted data (username, password, etc.)
-	encryptedVaultKey VARBINARY(512) NOT NULL,
-	
-	iv VARBINARY(12),
-	
-	authTag VARBINARY(16);
-	
-     createdAT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	
-	FOREIGN KEY (userID) REFERENCES user(userID)
-	ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS entries (
+    local_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    app_entry_id VARCHAR(24) NOT NULL UNIQUE,
+    user_local_id BIGINT UNSIGNED NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    site VARCHAR(255) NOT NULL,
+    entry_username VARCHAR(255) NOT NULL,
+    encrypted_password LONGTEXT NOT NULL,
+    encryption_salt TEXT NOT NULL,
+    encryption_iv TEXT NOT NULL,
+    notes TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_local_id) REFERENCES users(local_id) ON DELETE CASCADE
 );
 
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- DEVICE TABLE
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-
-CREATE TABLE device (
--- Primary Key
-     deviceID INT AUTO_INCREMENT PRIMARY KEY,
-
--- Owner of the device
-     userID INT NOT NULL,
-
--- Public key for encryption/authentication
-     publicKey VARBINARY(255) NOT NULL,
-
-	createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-     FOREIGN KEY (userID) REFERENCES user(userID)
-     ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS tags (
+    tag_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
 );
 
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- ENTRIES TABLE
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-
-CREATE TABLE entries (
--- Primary Key
-	entriesID INT AUTO_INCREMENT PRIMARY KEY,
-
--- Link to vault
-     passwordID INT NOT NULL,
-
--- Encrypted data (username, password, etc.)
-     encryptedVaultKey VARBINARY(255) NOT NULL,
-
--- Initialisation Vector for encryption
-     iv VARBINARY(255) NOT NULL,
-	
-	authTag VARBINARY(16);
-
-
-     createdAT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-     updatedAT TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
- 
-     FOREIGN KEY (vaultID) REFERENCES vault(vaultID)
-     ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS entry_tags (
+    entry_local_id BIGINT UNSIGNED NOT NULL,
+    tag_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (entry_local_id, tag_id),
+    FOREIGN KEY (entry_local_id) REFERENCES entries(local_id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE
 );
 
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- Notes TABLE
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-
-CREATE TABLE notes (
--- Primary Key
-	notesID INT AUTO_INCREMENT PRIMARY KEY,
-
--- Link to vault
-     passwordID INT NOT NULL,
-
--- Encrypted data (username, password, etc.)
-     encryptedVaultKey VARBINARY(255) NOT NULL,
-
--- Initialisation Vector for encryption
-     iv VARBINARY(255) NOT NULL,
-	
-	authTag VARBINARY(16);
-
-     createdAT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-     updatedAT TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
- 
-     FOREIGN KEY (vaultID) REFERENCES vault(vaultID)
-     ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS audit_events (
+    local_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    app_audit_id VARCHAR(24) NOT NULL UNIQUE,
+    user_app_id VARCHAR(24) NULL,
+    username VARCHAR(255) NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    details TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- TAG TABLE
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-
-CREATE TABLE tag (
--- Primary Key
-     tagID INT AUTO_INCREMENT PRIMARY KEY,
-
--- Tag name (e.g."Work", "Banking")
-     name VARCHAR(50) NOT NULL
-);
-
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- TAG & ENTRIES JUNCTION TABLE
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-
-CREATE TABLE tagEntries (
-    entryID INT NOT NULL,
-    tagID INT NOT NULL,
-
-    PRIMARY KEY (entryID, tagID),
-
-    FOREIGN KEY (entryID) REFERENCES entries(entriesID)
-    ON DELETE CASCADE,
-
-    FOREIGN KEY (tagID) REFERENCES tag(tagID)
-    ON DELETE CASCADE
-);
-
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- AUDIT TABLE
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-CREATE TABLE audit (
--- Primary Key
-	auditID INT AUTO_INCREMENT PRIMARY KEY,
-
--- Origin of the LOG
-     userID INT NOT NULL,
-
--- Action description (e.g., "LOGIN", "ADD_ENTRY")
-     action VARBINARY(255) NOT NULL,
-
-     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-     FOREIGN KEY (userID) REFERENCES user(userID)
-     ON DELETE CASCADE
-);
-
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- VERIFICATING TABLES
--- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 SHOW TABLES;
