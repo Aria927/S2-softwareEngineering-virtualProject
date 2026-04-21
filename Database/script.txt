@@ -98,6 +98,32 @@ CREATE TABLE entries (
 );
 
 -- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+-- Notes TABLE
+-- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+
+CREATE TABLE notes (
+-- Primary Key
+	notesID INT AUTO_INCREMENT PRIMARY KEY,
+
+-- Link to vault
+     passwordID INT NOT NULL,
+
+-- Encrypted data (username, password, etc.)
+     encryptedVaultKey VARBINARY(255) NOT NULL,
+
+-- Initialisation Vector for encryption
+     iv VARBINARY(255) NOT NULL,
+	
+	authTag VARBINARY(16);
+
+     createdAT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     updatedAT TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ 
+     FOREIGN KEY (vaultID) REFERENCES vault(vaultID)
+     ON DELETE CASCADE
+);
+
+-- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 -- TAG TABLE
 -- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 
@@ -146,6 +172,6 @@ CREATE TABLE audit (
 );
 
 -- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
--- VERIFICATION
+-- VERIFICATING TABLES
 -- +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 SHOW TABLES;
