@@ -291,18 +291,14 @@ void ofApp::drawMainScreen() {
     ofSetColor(255);
     headerMedFont.drawString("Password Manager", 520, 62);
 
-    if (!statusMessage.empty()) {
-        ofSetColor(225, 240, 255);
-        smallFont.drawString(statusMessage, 640, 62);
-    }
-
     // header bar
     ofSetColor(230, 230, 230);
     ofDrawRectangle(headerBar);
+    ofDrawRectangle(1245, 90, 35, 65);
     ofSetColor(80, 80, 80);
-    headerFont.drawString("App/Website Name", 160, 133);
-    headerFont.drawString("Username", 560, 133);
-    headerFont.drawString("Password", 900, 133);
+    headerFont.drawString("App/Website Name", 90, 133);
+    headerFont.drawString("Username", 490, 133);
+    headerFont.drawString("Password", 830, 133);
 
     // scrollbar track area bg
     ofSetColor(230, 230, 230);
@@ -328,65 +324,49 @@ void ofApp::drawMainScreen() {
         else { ofSetColor(248, 248, 248); }
         ofDrawRectangle(0, rowY, 1245, rowHeight);
 
-        if (editingRow == i) {
-            // draw edit boxes inline
-            ofSetColor(255, 255, 255);
-            ofDrawRectRounded(editNameBox, 6);
-            ofDrawRectRounded(editUserBox, 6);
-            ofDrawRectRounded(editPassBox, 6);
-            ofNoFill();
-            ofSetLineWidth(1);
-            ofSetColor(180, 180, 180);
-            ofDrawRectRounded(editNameBox, 6);
-            ofDrawRectRounded(editUserBox, 6);
-            ofDrawRectRounded(editPassBox, 6);
-            ofFill();
-            drawFieldText(
-                smallFont, editName, "", editNameBox.x + 8, rowY + 50, editNameInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
-            drawFieldText(
-                smallFont, editUser, "", editUserBox.x + 8, rowY + 50, editUserInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
-            drawFieldText(
-                smallFont, editPass, "", editPassBox.x + 8, rowY + 50, editPassInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
-        }
-        else {
-            ofSetColor(80, 80, 80);
-            smallFont.drawString(filteredEntries[i].appName, 60, rowY + 50);
-            smallFont.drawString(filteredEntries[i].username, 460, rowY + 50);
+        const float rowCenterY = rowY + rowHeight * 0.5f;
+        auto centeredTextBaseline = [&](const string& value) {
+            const ofRectangle bounds = smallFont.getStringBoundingBox(value, 0, 0);
+            return rowY + (rowHeight - bounds.height) * 0.5f - bounds.y;
+        };
+
+        ofSetColor(80, 80, 80);
+        smallFont.drawString(filteredEntries[i].appName, 60, centeredTextBaseline(filteredEntries[i].appName));
+        smallFont.drawString(filteredEntries[i].username, 460, centeredTextBaseline(filteredEntries[i].username));
 
             // password — masked or visible
             if (i < passwordVisible.size() && passwordVisible[i] == true) {
-                smallFont.drawString(filteredEntries[i].password, 820, rowY + 50);
+                smallFont.drawString(filteredEntries[i].password, 820, centeredTextBaseline(filteredEntries[i].password));
             }
             else {
                 string masked = string(filteredEntries[i].password.size(), '*');
-                smallFont.drawString(masked, 820, rowY + 50);
+                smallFont.drawString(masked, 820, centeredTextBaseline(masked));
             }
-        }
 
         // pencil icon (left)
         ofSetColor(120, 120, 120);
         ofSetLineWidth(1.5);
         ofNoFill();
         // pencil body
-        ofDrawLine(18, rowY + 28, 30, rowY + 16);
-        ofDrawLine(30, rowY + 16, 36, rowY + 22);
-        ofDrawLine(36, rowY + 22, 24, rowY + 34);
-        ofDrawLine(24, rowY + 34, 18, rowY + 28);
+        ofDrawLine(18, rowCenterY + 1, 30, rowCenterY - 11);
+        ofDrawLine(30, rowCenterY - 11, 36, rowCenterY - 5);
+        ofDrawLine(36, rowCenterY - 5, 24, rowCenterY + 7);
+        ofDrawLine(24, rowCenterY + 7, 18, rowCenterY + 1);
         // pencil tip
-        ofDrawLine(18, rowY + 28, 15, rowY + 38);
-        ofDrawLine(15, rowY + 38, 24, rowY + 34);
+        ofDrawLine(18, rowCenterY + 1, 15, rowCenterY + 11);
+        ofDrawLine(15, rowCenterY + 11, 24, rowCenterY + 7);
         ofFill();
 
         // bin icon
         ofSetColor(120, 120, 120);
         ofNoFill();
         ofSetLineWidth(1.5);
-        ofDrawRectangle(1088, rowY + 17, 18, 20);
-        ofDrawLine(1085, rowY + 17, 1109, rowY + 17);
-        ofDrawLine(1094, rowY + 13, 1100, rowY + 13);
-        ofDrawLine(1094, rowY + 21, 1094, rowY + 33);
-        ofDrawLine(1097, rowY + 21, 1097, rowY + 33);
-        ofDrawLine(1100, rowY + 21, 1100, rowY + 33);
+        ofDrawRectangle(1088, rowCenterY - 10, 18, 20);
+        ofDrawLine(1085, rowCenterY - 10, 1109, rowCenterY - 10);
+        ofDrawLine(1094, rowCenterY - 14, 1100, rowCenterY - 14);
+        ofDrawLine(1094, rowCenterY - 6, 1094, rowCenterY + 6);
+        ofDrawLine(1097, rowCenterY - 6, 1097, rowCenterY + 6);
+        ofDrawLine(1100, rowCenterY - 6, 1100, rowCenterY + 6);
         ofFill();
 
         // eye icon (right)
@@ -394,9 +374,9 @@ void ofApp::drawMainScreen() {
         ofNoFill();
         ofSetLineWidth(1.5);
         // eye outline arc approximation
-        ofDrawLine(1160, rowY + 27, 1190, rowY + 27);
-        ofDrawEllipse(1175, rowY + 27, 36, 20);
-        ofDrawCircle(1175, rowY + 27, 6);
+        ofDrawLine(1160, rowCenterY, 1190, rowCenterY);
+        ofDrawEllipse(1175, rowCenterY, 36, 20);
+        ofDrawCircle(1175, rowCenterY, 6);
         ofFill();
     }
 
