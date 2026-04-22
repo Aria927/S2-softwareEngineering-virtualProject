@@ -39,9 +39,9 @@ public:
 
     // add new popup
     bool popupOpen;
-    string popupName, popupUser, popupPass;
-    bool popupNameInput, popupUserInput, popupPassInput;
-    ofRectangle popupBG, popupNameBox, popupUserBox, popupPassBox;
+    string popupName, popupUser, popupPass, popupNotes;
+    bool popupNameInput, popupUserInput, popupPassInput, popupNotesInput;
+    ofRectangle popupBG, popupNameBox, popupUserBox, popupPassBox, popupNotesBox;
     Button popupConfirmBtn, popupCancelBtn;
 
     // password entries
@@ -57,9 +57,9 @@ public:
     vector<bool> passwordVisible; // indexed by entries, not filteredEntries
     bool editPopupOpen;
     int editingRow;
-    string editName, editUser, editPass;
-    bool editNameInput, editUserInput, editPassInput;
-    ofRectangle editPopupBG, editNameBox, editUserBox, editPassBox;
+    string editName, editUser, editPass, editNotes;
+    bool editNameInput, editUserInput, editPassInput, editNotesInput;
+    ofRectangle editPopupBG, editNameBox, editUserBox, editPassBox, editNotesBox;
     Button editConfirmBtn, editCancelBtn;
 
     // header / layout rects

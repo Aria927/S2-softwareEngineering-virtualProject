@@ -165,13 +165,14 @@ bool BackendBridge::addEntry(
     const std::string& appName,
     const std::string& username,
     const std::string& password,
+    const std::string& notes,
     std::string& message) {
     const auto result = vaultService_.createVaultEntry({
         .title = appName,
         .site = appName,
         .username = username,
         .password = password,
-        .notes = "",
+        .notes = notes,
         .tags = {},
     });
 
@@ -184,13 +185,14 @@ bool BackendBridge::updateEntry(
     const std::string& appName,
     const std::string& username,
     const std::string& password,
+    const std::string& notes,
     std::string& message) {
     const auto result = vaultService_.updateVaultEntry(entryId, {
         .title = appName,
         .site = appName,
         .username = username,
         .password = password,
-        .notes = "",
+        .notes = notes,
         .tags = {},
     });
 
@@ -237,6 +239,7 @@ std::vector<PasswordEntry> BackendBridge::mapEntries(
             .appName = entry.title,
             .username = entry.username,
             .password = entry.password,
+            .notes = entry.notes,
         });
     }
 

@@ -88,10 +88,9 @@ void Button::draw(ofEventArgs&) {
 		}
 
 		ofSetColor(textColour); // text colour
-		float textWidth = font->stringWidth(label);
-		float textHeight = font->stringHeight(label);
-		float textX = btn.x + (btn.width - textWidth) / 2 + labelOffsetX; //set x position of labels
-		float textY = btn.y + (btn.height + textHeight) / 2 + labelOffsetY; //set y position of labels
+		const ofRectangle textBounds = font->getStringBoundingBox(label, 0, 0);
+		float textX = btn.x + (btn.width - textBounds.width) / 2 - textBounds.x + labelOffsetX;
+		float textY = btn.y + (btn.height - textBounds.height) / 2 - textBounds.y + labelOffsetY;
 		font->drawString(label, textX, textY);
 	}
 }

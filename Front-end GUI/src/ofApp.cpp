@@ -14,6 +14,7 @@ void ofApp::setup() {
     popupName = "App/Website Name";
     popupUser = "Username";
     popupPass = "Password";
+    popupNotes = "Notes / General Text";
 
     searchInput = false;
     searchString = "Search";
@@ -22,9 +23,11 @@ void ofApp::setup() {
     popupName = "App/Website Name";
     popupUser = "Username";
     popupPass = "Password";
+    popupNotes = "Notes / General Text";
     popupNameInput = false;
     popupUserInput = false;
     popupPassInput = false;
+    popupNotesInput = false;
 
     scrollOffset = 0;
     rowHeight = 80;
@@ -32,6 +35,7 @@ void ofApp::setup() {
     editNameInput = false;
     editUserInput = false;
     editPassInput = false;
+    editNotesInput = false;
     statusMessage = "";
 
     headerXLFont.load("Alfarn W05 Regular.otf", 56);
@@ -75,11 +79,13 @@ void ofApp::setup() {
     addNewBox.set(348, 18, 140, 54);
 
     // main screen buttons
-    popupConfirmBtn.create("Add", 490, 470, 120, 45, 0x1380F0, &smallFont);
+    popupConfirmBtn.create("Add", 490, 580, 120, 45, 0x1380F0, &smallFont);
     popupConfirmBtn.setCornerRadius(8);
     popupConfirmBtn.toggle(false);
-    popupCancelBtn.create("Cancel", 630, 470, 120, 45, 0xE0E0E0, &smallFont);
+    popupCancelBtn.create("Cancel", 630, 580, 120, 45, 0xE0E0E0, &smallFont);
     popupCancelBtn.setCornerRadius(8);
+    popupCancelBtn.setTextColour(ofColor(80, 80, 80));
+    popupCancelBtn.setBorderColour(ofColor(198, 198, 198));
     popupCancelBtn.toggle(false);
     logoutBtn.create("Logout", 1155, 23, 90, 44, 0xFAFAFA, &smallFont);
     logoutBtn.setCornerRadius(10);
@@ -87,27 +93,32 @@ void ofApp::setup() {
     logoutBtn.setBorderColour(ofColor(198, 198, 198));
     logoutBtn.toggle(false);
 
-    popupBG.set(390, 240, 500, 290);
-    popupNameBox.set(430, 280, 420, 50);
-    popupUserBox.set(430, 345, 420, 50);
-    popupPassBox.set(430, 410, 420, 50);
+    popupBG.set(390, 75, 500, 570);
+    popupNameBox.set(430, 145, 420, 50);
+    popupUserBox.set(430, 210, 420, 50);
+    popupPassBox.set(430, 275, 420, 50);
+    popupNotesBox.set(430, 340, 420, 200);
 
     editPopupOpen = false;
     editingRow = -1;
     editNameInput = false;
     editUserInput = false;
     editPassInput = false;
+    editNotesInput = false;
 
-    editPopupBG.set(390, 240, 500, 290);
-    editNameBox.set(430, 280, 420, 50);
-    editUserBox.set(430, 345, 420, 50);
-    editPassBox.set(430, 410, 420, 50);
+    editPopupBG.set(390, 75, 500, 570);
+    editNameBox.set(430, 145, 420, 50);
+    editUserBox.set(430, 210, 420, 50);
+    editPassBox.set(430, 275, 420, 50);
+    editNotesBox.set(430, 340, 420, 200);
 
-    editConfirmBtn.create("Save", 490, 470, 120, 45, 0x1380F0, &smallFont);
+    editConfirmBtn.create("Save", 490, 580, 120, 45, 0x1380F0, &smallFont);
     editConfirmBtn.setCornerRadius(8);
     editConfirmBtn.toggle(false);
-    editCancelBtn.create("Discard", 630, 470, 120, 45, 0xE0E0E0, &smallFont);
+    editCancelBtn.create("Discard", 630, 580, 120, 45, 0xE0E0E0, &smallFont);
     editCancelBtn.setCornerRadius(8);
+    editCancelBtn.setTextColour(ofColor(80, 80, 80));
+    editCancelBtn.setBorderColour(ofColor(198, 198, 198));
     editCancelBtn.toggle(false);
 
     scrollBar.setup(1245, 155, 35, 565);
@@ -137,6 +148,21 @@ void ofApp::update() {
     }
     if (popupPassInput == false && popupPass == "") {
         popupPass = "Password";
+    }
+    if (popupNotesInput == false && popupNotes == "") {
+        popupNotes = "Notes / General Text";
+    }
+    if (editNameInput == false && editName == "") {
+        editName = "App/Website Name";
+    }
+    if (editUserInput == false && editUser == "") {
+        editUser = "Username";
+    }
+    if (editPassInput == false && editPass == "") {
+        editPass = "Password";
+    }
+    if (editNotesInput == false && editNotes == "") {
+        editNotes = "Notes / General Text";
     }
 }
 
@@ -295,6 +321,9 @@ void ofApp::drawMainScreen() {
     ofSetColor(230, 230, 230);
     ofDrawRectangle(headerBar);
     ofDrawRectangle(1245, 90, 35, 65);
+    ofSetColor(0, 0, 0);
+    ofSetLineWidth(1.0f);
+    ofDrawLine(0, 155, 1245, 155);
     ofSetColor(80, 80, 80);
     headerFont.drawString("App/Website Name", 90, 133);
     headerFont.drawString("Username", 490, 133);
@@ -329,7 +358,6 @@ void ofApp::drawMainScreen() {
             const ofRectangle bounds = smallFont.getStringBoundingBox(value, 0, 0);
             return rowY + (rowHeight - bounds.height) * 0.5f - bounds.y;
         };
-
         ofSetColor(80, 80, 80);
         smallFont.drawString(filteredEntries[i].appName, 60, centeredTextBaseline(filteredEntries[i].appName));
         smallFont.drawString(filteredEntries[i].username, 460, centeredTextBaseline(filteredEntries[i].username));
@@ -340,7 +368,7 @@ void ofApp::drawMainScreen() {
             }
             else {
                 string masked = string(filteredEntries[i].password.size(), '*');
-                smallFont.drawString(masked, 820, centeredTextBaseline(masked));
+                smallFont.drawString(masked, 820, centeredTextBaseline("Password"));
             }
 
         // pencil icon (left)
@@ -396,7 +424,7 @@ void ofApp::drawMainScreen() {
         ofDrawRectRounded(popupBG, 12);
 
         ofSetColor(51, 51, 51);
-        smallFont.drawString("Add New Entry", 575, 270);
+        smallFont.drawString("Add New Entry", 575, 135);
 
         if (popupNameInput == false) { ofSetColor(230, 230, 230); }
         else { ofSetColor(255, 255, 255); }
@@ -410,20 +438,34 @@ void ofApp::drawMainScreen() {
         else { ofSetColor(255, 255, 255); }
         ofDrawRectRounded(popupPassBox, 8);
 
+        if (popupNotesInput == false) { ofSetColor(230, 230, 230); }
+        else { ofSetColor(255, 255, 255); }
+        ofDrawRectRounded(popupNotesBox, 8);
+
         ofNoFill();
         ofSetLineWidth(1);
         ofSetColor(198, 198, 198);
         ofDrawRectRounded(popupNameBox, 8);
         ofDrawRectRounded(popupUserBox, 8);
         ofDrawRectRounded(popupPassBox, 8);
+        ofDrawRectRounded(popupNotesBox, 8);
         ofFill();
 
         drawFieldText(
-            smallFont, popupName, "App/Website Name", 440, 313, popupNameInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+            smallFont, popupName, "App/Website Name", 440, 178, popupNameInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
         drawFieldText(
-            smallFont, popupUser, "Username", 440, 378, popupUserInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+            smallFont, popupUser, "Username", 440, 243, popupUserInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
         drawFieldText(
-            smallFont, popupPass, "Password", 440, 443, popupPassInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+            smallFont, popupPass, "Password", 440, 308, popupPassInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+        drawFieldText(
+            smallFont,
+            popupNotes,
+            "Notes / General Text",
+            440,
+            373,
+            popupNotesInput,
+            ofColor(50, 50, 50),
+            ofColor(160, 160, 160));
     }
 
     // edit popup overlay
@@ -435,7 +477,7 @@ void ofApp::drawMainScreen() {
         ofDrawRectRounded(editPopupBG, 12);
 
         ofSetColor(51, 51, 51);
-        smallFont.drawString("Edit Entry", 575, 270);
+        smallFont.drawString("Edit Entry", 575, 135);
 
         if (editNameInput == false) { ofSetColor(230, 230, 230); }
         else { ofSetColor(255, 255, 255); }
@@ -449,20 +491,34 @@ void ofApp::drawMainScreen() {
         else { ofSetColor(255, 255, 255); }
         ofDrawRectRounded(editPassBox, 8);
 
+        if (editNotesInput == false) { ofSetColor(230, 230, 230); }
+        else { ofSetColor(255, 255, 255); }
+        ofDrawRectRounded(editNotesBox, 8);
+
         ofNoFill();
         ofSetLineWidth(1);
         ofSetColor(198, 198, 198);
         ofDrawRectRounded(editNameBox, 8);
         ofDrawRectRounded(editUserBox, 8);
         ofDrawRectRounded(editPassBox, 8);
+        ofDrawRectRounded(editNotesBox, 8);
         ofFill();
 
         drawFieldText(
-            smallFont, editName, "", 440, 313, editNameInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+            smallFont, editName, "App/Website Name", 440, 178, editNameInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
         drawFieldText(
-            smallFont, editUser, "", 440, 378, editUserInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+            smallFont, editUser, "Username", 440, 243, editUserInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
         drawFieldText(
-            smallFont, editPass, "", 440, 443, editPassInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+            smallFont, editPass, "Password", 440, 308, editPassInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+        drawFieldText(
+            smallFont,
+            editNotes,
+            "Notes / General Text",
+            440,
+            373,
+            editNotesInput,
+            ofColor(50, 50, 50),
+            ofColor(160, 160, 160));
     }
 
 }
@@ -533,16 +589,24 @@ void ofApp::keyPressed(int key) {
         popupNameInput = index == 0;
         popupUserInput = index == 1;
         popupPassInput = index == 2;
+        popupNotesInput = index == 3;
 
         if (popupNameInput && popupName == "App/Website Name") popupName = "";
         if (popupUserInput && popupUser == "Username") popupUser = "";
         if (popupPassInput && popupPass == "Password") popupPass = "";
+        if (popupNotesInput && popupNotes == "Notes / General Text") popupNotes = "";
     };
 
     auto activateEditField = [&](int index) {
         editNameInput = index == 0;
         editUserInput = index == 1;
         editPassInput = index == 2;
+        editNotesInput = index == 3;
+
+        if (editNameInput && editName == "App/Website Name") editName = "";
+        if (editUserInput && editUser == "Username") editUser = "";
+        if (editPassInput && editPass == "Password") editPass = "";
+        if (editNotesInput && editNotes == "Notes / General Text") editNotes = "";
     };
 
     if (mainScreen == false) {
@@ -575,8 +639,8 @@ void ofApp::keyPressed(int key) {
     else {
         if (editPopupOpen) {
             if (key == OF_KEY_TAB) {
-                int activeIndex = editNameInput ? 0 : (editUserInput ? 1 : (editPassInput ? 2 : -1));
-                const int nextIndex = (activeIndex + 1 + 3) % 3;
+                int activeIndex = editNameInput ? 0 : (editUserInput ? 1 : (editPassInput ? 2 : (editNotesInput ? 3 : -1)));
+                const int nextIndex = (activeIndex + 1 + 4) % 4;
                 activateEditField(nextIndex);
                 return;
             }
@@ -590,8 +654,8 @@ void ofApp::keyPressed(int key) {
 
         if (popupOpen) {
             if (key == OF_KEY_TAB) {
-                int activeIndex = popupNameInput ? 0 : (popupUserInput ? 1 : (popupPassInput ? 2 : -1));
-                const int nextIndex = (activeIndex + 1 + 3) % 3;
+                int activeIndex = popupNameInput ? 0 : (popupUserInput ? 1 : (popupPassInput ? 2 : (popupNotesInput ? 3 : -1)));
+                const int nextIndex = (activeIndex + 1 + 4) % 4;
                 activatePopupField(nextIndex);
                 return;
             }
@@ -620,18 +684,22 @@ void ofApp::keyPressed(int key) {
             else if (popupNameInput && popupName.size() > 0) popupName.pop_back();
             else if (popupUserInput && popupUser.size() > 0) popupUser.pop_back();
             else if (popupPassInput && popupPass.size() > 0) popupPass.pop_back();
+            else if (popupNotesInput && popupNotes.size() > 0) popupNotes.pop_back();
             else if (editNameInput && editName.size() > 0) editName.pop_back();
             else if (editUserInput && editUser.size() > 0) editUser.pop_back();
             else if (editPassInput && editPass.size() > 0) editPass.pop_back();
+            else if (editNotesInput && editNotes.size() > 0) editNotes.pop_back();
         }
         else if (key >= 32 && key < 128) {
             if (searchInput) { searchString += (char)key; updateFilter(); }
             if (popupNameInput) popupName += (char)key;
             if (popupUserInput) popupUser += (char)key;
             if (popupPassInput) popupPass += (char)key;
+            if (popupNotesInput) popupNotes += (char)key;
             if (editNameInput) editName += (char)key;
             if (editUserInput) editUser += (char)key;
             if (editPassInput) editPass += (char)key;
+            if (editNotesInput) editNotes += (char)key;
         }
     }
 }
@@ -681,21 +749,44 @@ void ofApp::mousePressed(int x, int y, int button) {
             editNameInput = true;
             editUserInput = false;
             editPassInput = false;
+            editNotesInput = false;
+            if (editName == "App/Website Name") {
+                editName = "";
+            }
         }
         else if (editUserBox.inside(x, y) && editUserInput == false) {
             editUserInput = true;
             editNameInput = false;
             editPassInput = false;
+            editNotesInput = false;
+            if (editUser == "Username") {
+                editUser = "";
+            }
         }
         else if (editPassBox.inside(x, y) && editPassInput == false) {
             editPassInput = true;
             editNameInput = false;
             editUserInput = false;
+            editNotesInput = false;
+            if (editPass == "Password") {
+                editPass = "";
+            }
         }
-        else if (!editNameBox.inside(x, y) && !editUserBox.inside(x, y) && !editPassBox.inside(x, y)) {
+        else if (editNotesBox.inside(x, y) && editNotesInput == false) {
+            editNotesInput = true;
             editNameInput = false;
             editUserInput = false;
             editPassInput = false;
+            if (editNotes == "Notes / General Text") {
+                editNotes = "";
+            }
+        }
+        else if (!editNameBox.inside(x, y) && !editUserBox.inside(x, y) && !editPassBox.inside(x, y) &&
+                 !editNotesBox.inside(x, y)) {
+            editNameInput = false;
+            editUserInput = false;
+            editPassInput = false;
+            editNotesInput = false;
         }
         return;
     }
@@ -706,6 +797,7 @@ void ofApp::mousePressed(int x, int y, int button) {
             popupNameInput = true;
             popupUserInput = false;
             popupPassInput = false;
+            popupNotesInput = false;
 
             if (popupName == "App/Website Name") {
                 popupName = "";
@@ -715,6 +807,7 @@ void ofApp::mousePressed(int x, int y, int button) {
             popupUserInput = true;
             popupNameInput = false;
             popupPassInput = false;
+            popupNotesInput = false;
 
             if (popupUser == "Username") {
                 popupUser = "";
@@ -724,15 +817,28 @@ void ofApp::mousePressed(int x, int y, int button) {
             popupPassInput = true;
             popupNameInput = false;
             popupUserInput = false;
+            popupNotesInput = false;
 
             if (popupPass == "Password") {
                 popupPass = "";
             }
         }
-        else if (!popupNameBox.inside(x, y) && !popupUserBox.inside(x, y) && !popupPassBox.inside(x, y)) {
+        else if (popupNotesBox.inside(x, y) && popupNotesInput == false) {
+            popupNotesInput = true;
             popupNameInput = false;
             popupUserInput = false;
             popupPassInput = false;
+
+            if (popupNotes == "Notes / General Text") {
+                popupNotes = "";
+            }
+        }
+        else if (!popupNameBox.inside(x, y) && !popupUserBox.inside(x, y) && !popupPassBox.inside(x, y) &&
+                 !popupNotesBox.inside(x, y)) {
+            popupNameInput = false;
+            popupUserInput = false;
+            popupPassInput = false;
+            popupNotesInput = false;
         }
         return;
     }
@@ -749,7 +855,7 @@ void ofApp::mousePressed(int x, int y, int button) {
     // add new box
     if (addNewBox.inside(x, y)) {
         popupOpen = true;
-        popupNameInput = false; popupUserInput = false; popupPassInput = false;
+        popupNameInput = false; popupUserInput = false; popupPassInput = false; popupNotesInput = false;
         popupConfirmBtn.toggle(true);
         popupCancelBtn.toggle(true);
         return;
@@ -774,9 +880,11 @@ void ofApp::mousePressed(int x, int y, int button) {
             editName = filteredEntries[rowIndex].appName;
             editUser = filteredEntries[rowIndex].username;
             editPass = filteredEntries[rowIndex].password;
+            editNotes = filteredEntries[rowIndex].notes;
             editNameInput = false;
             editUserInput = false;
             editPassInput = false;
+            editNotesInput = false;
             editPopupOpen = true;
             editConfirmBtn.toggle(true);
             editCancelBtn.toggle(true);
@@ -866,8 +974,9 @@ void ofApp::buttonEvent(string& label) {
         const string appName = sanitiseField(popupName, "App/Website Name");
         const string username = sanitiseField(popupUser, "Username");
         const string password = sanitiseField(popupPass, "Password");
+        const string notes = sanitiseField(popupNotes, "Notes / General Text");
 
-        if (backendBridge.addEntry(appName, username, password, statusMessage)) {
+        if (backendBridge.addEntry(appName, username, password, notes, statusMessage)) {
             entries = backendBridge.getAllEntries(statusMessage);
             updateFilter();
         }
@@ -889,25 +998,26 @@ void ofApp::buttonEvent(string& label) {
     }
     else if (label == "Save") {
         if (editingRow >= 0 && editingRow < filteredEntries.size()) {
-            filteredEntries[editingRow].appName = editName;
-            filteredEntries[editingRow].username = editUser;
-            filteredEntries[editingRow].password = editPass;
-            for (int i = 0; i < entries.size(); i++) {
-                if (entries[i].appName == filteredEntries[editingRow].appName) {
-                    entries[i] = filteredEntries[editingRow];
-                }
+            const PasswordEntry currentEntry = filteredEntries[editingRow];
+            const string appName = sanitiseField(editName, "App/Website Name");
+            const string username = sanitiseField(editUser, "Username");
+            const string password = sanitiseField(editPass, "Password");
+            const string notes = sanitiseField(editNotes, "Notes / General Text");
+            if (backendBridge.updateEntry(currentEntry.id, appName, username, password, notes, statusMessage)) {
+                entries = backendBridge.getAllEntries(statusMessage);
+                updateFilter();
             }
         }
         editPopupOpen = false;
         editingRow = -1;
-        editNameInput = false; editUserInput = false; editPassInput = false;
+        editNameInput = false; editUserInput = false; editPassInput = false; editNotesInput = false;
         editConfirmBtn.toggle(false);
         editCancelBtn.toggle(false);
     }
     else if (label == "Discard") {
         editPopupOpen = false;
         editingRow = -1;
-        editNameInput = false; editUserInput = false; editPassInput = false;
+        editNameInput = false; editUserInput = false; editPassInput = false; editNotesInput = false;
         editConfirmBtn.toggle(false);
         editCancelBtn.toggle(false);
     }
@@ -921,7 +1031,7 @@ void ofApp::updateFilter() {
             filteredEntries.push_back(entries[i]);
         }
         else {
-            string entryLower = entries[i].appName;
+            string entryLower = entries[i].appName + " " + entries[i].username + " " + entries[i].notes;
             string searchLower = searchString;
             for (int j = 0; j < entryLower.size(); j++) entryLower[j] = tolower(entryLower[j]);
             for (int j = 0; j < searchLower.size(); j++) searchLower[j] = tolower(searchLower[j]);
@@ -958,6 +1068,7 @@ void ofApp::resetToLoginScreen() {
     editNameInput = false;
     editUserInput = false;
     editPassInput = false;
+    editNotesInput = false;
     editingRow = -1;
     scrollOffset = 0;
 
@@ -984,7 +1095,9 @@ void ofApp::resetPopupFields() {
     popupNameInput = false;
     popupUserInput = false;
     popupPassInput = false;
+    popupNotesInput = false;
     popupName = "App/Website Name";
     popupUser = "Username";
     popupPass = "Password";
+    popupNotes = "Notes / General Text";
 }

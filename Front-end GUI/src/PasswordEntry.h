@@ -7,4 +7,5 @@ struct PasswordEntry {
     string appName;
     string username;
     string password;
+    string notes;
 };
