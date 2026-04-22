@@ -12,6 +12,8 @@ public:
     void draw();
     void keyPressed(int key);
     void mousePressed(int x, int y, int button);
+    void mouseDragged(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
     void mouseScrolled(int x, int y, float scrollX, float scrollY);
     void buttonEvent(string& label);
 
@@ -72,4 +74,21 @@ public:
     void resetToLoginScreen();
     void resetPopupFields();
     string sanitiseField(const string& value, const string& placeholder);
+    bool shouldDrawCaret() const;
+    void drawFieldText(
+        const ofTrueTypeFont& font,
+        const string& value,
+        const string& placeholder,
+        float x,
+        float y,
+        bool active,
+        const ofColor& textColor,
+        const ofColor& placeholderColor) const;
+    void drawCaretForText(
+        const ofTrueTypeFont& font,
+        const string& value,
+        const string& placeholder,
+        float x,
+        float y,
+        bool active) const;
 };

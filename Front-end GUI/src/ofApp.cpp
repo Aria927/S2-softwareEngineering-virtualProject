@@ -132,7 +132,7 @@ void ofApp::update() {
     if (popupNameInput == false && popupName == "") {
         popupName = "App/Website Name";
     }
-    if (popupPassUser == false && popupUser == "") {
+    if (popupUserInput == false && popupUser == "") {
         popupUser = "Username";
     }
     if (popupPassInput == false && popupPass == "") {
@@ -208,11 +208,20 @@ void ofApp::drawLoginScreen() {
     ofFill();
 
     // input text
-    ofSetColor(160, 160, 160);
-    standardFont.drawString(Email, 745, 204);
-    standardFont.drawString(Password, 745, 294);
+    drawFieldText(
+        standardFont, Email, "Email Address", 745, 204, emailInput, ofColor(70, 70, 70), ofColor(160, 160, 160));
+    drawFieldText(
+        standardFont, Password, "Password", 745, 294, passwordInput, ofColor(70, 70, 70), ofColor(160, 160, 160));
     if (createAccountScreen == true) {
-        standardFont.drawString(RePassword, 745, 384);
+        drawFieldText(
+            standardFont,
+            RePassword,
+            "Re-enter Password",
+            745,
+            384,
+            rePasswordInput,
+            ofColor(70, 70, 70),
+            ofColor(160, 160, 160));
     }
 
     // login screen extras
@@ -226,7 +235,10 @@ void ofApp::drawLoginScreen() {
     }
 
     if (!statusMessage.empty()) {
-        ofSetColor(120, 120, 120);
+        const bool isLoginError =
+            statusMessage.find("username or password") != string::npos ||
+            statusMessage.find("Username or password") != string::npos;
+        ofSetColor(isLoginError ? ofColor(200, 50, 50) : ofColor(120, 120, 120));
         smallFont.drawString(statusMessage, 740, createAccountScreen ? 535 : 470);
     }
 }
@@ -248,8 +260,7 @@ void ofApp::drawMainScreen() {
     ofSetColor(198, 198, 198);
     ofDrawRectRounded(searchBox, 10);
     ofFill();
-    ofSetColor(160, 160, 160);
-    smallFont.drawString(searchString, 35, 53);
+    drawFieldText(smallFont, searchString, "Search", 35, 53, searchInput, ofColor(70, 70, 70), ofColor(160, 160, 160));
     // search icon (simple circle + line)
     ofNoFill();
     ofSetLineWidth(2.5);
@@ -297,13 +308,15 @@ void ofApp::drawMainScreen() {
     ofSetColor(230, 230, 230);
     ofDrawRectangle(1245, 155, 35, 565);
 
-    // clip rows to view area
+    // clip rows to the vault list area
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, ofGetHeight() - (155 + 565), 1245, 565);
     ofPushMatrix();
     ofTranslate(0, -scrollOffset);
 
     float contentHeight = filteredEntries.size() * rowHeight;
-    float viewStart = scrollOffset;
-    float viewEnd = scrollOffset + 565;
+    float viewStart = 155 + scrollOffset;
+    float viewEnd = 155 + scrollOffset + 565;
 
     for (int i = 0; i < filteredEntries.size(); i++) {
         float rowY = 155 + i * rowHeight;
@@ -328,10 +341,12 @@ void ofApp::drawMainScreen() {
             ofDrawRectRounded(editUserBox, 6);
             ofDrawRectRounded(editPassBox, 6);
             ofFill();
-            ofSetColor(50, 50, 50);
-            smallFont.drawString(editName, editNameBox.x + 8, rowY + 50);
-            smallFont.drawString(editUser, editUserBox.x + 8, rowY + 50);
-            smallFont.drawString(editPass, editPassBox.x + 8, rowY + 50);
+            drawFieldText(
+                smallFont, editName, "", editNameBox.x + 8, rowY + 50, editNameInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+            drawFieldText(
+                smallFont, editUser, "", editUserBox.x + 8, rowY + 50, editUserInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+            drawFieldText(
+                smallFont, editPass, "", editPassBox.x + 8, rowY + 50, editPassInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
         }
         else {
             ofSetColor(80, 80, 80);
@@ -386,6 +401,7 @@ void ofApp::drawMainScreen() {
     }
 
     ofPopMatrix();
+    glDisable(GL_SCISSOR_TEST);
 
     // scrollbar thumb
     float contentH = max((float)filteredEntries.size() * rowHeight, 1.0f);
@@ -422,10 +438,12 @@ void ofApp::drawMainScreen() {
         ofDrawRectRounded(popupPassBox, 8);
         ofFill();
 
-        ofSetColor(160, 160, 160);
-        smallFont.drawString(popupName, 440, 313);
-        smallFont.drawString(popupUser, 440, 378);
-        smallFont.drawString(popupPass, 440, 443);
+        drawFieldText(
+            smallFont, popupName, "App/Website Name", 440, 313, popupNameInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+        drawFieldText(
+            smallFont, popupUser, "Username", 440, 378, popupUserInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+        drawFieldText(
+            smallFont, popupPass, "Password", 440, 443, popupPassInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
     }
 
     // edit popup overlay
@@ -459,17 +477,109 @@ void ofApp::drawMainScreen() {
         ofDrawRectRounded(editPassBox, 8);
         ofFill();
 
-        ofSetColor(50, 50, 50);
-        smallFont.drawString(editName, 440, 313);
-        smallFont.drawString(editUser, 440, 378);
-        smallFont.drawString(editPass, 440, 443);
+        drawFieldText(
+            smallFont, editName, "", 440, 313, editNameInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+        drawFieldText(
+            smallFont, editUser, "", 440, 378, editUserInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
+        drawFieldText(
+            smallFont, editPass, "", 440, 443, editPassInput, ofColor(50, 50, 50), ofColor(160, 160, 160));
     }
 
 }
 
 //--------------------------------------------------------------
+bool ofApp::shouldDrawCaret() const {
+    return static_cast<int>(ofGetElapsedTimef() * 2.0f) % 2 == 0;
+}
+
+//--------------------------------------------------------------
+void ofApp::drawFieldText(
+    const ofTrueTypeFont& font,
+    const string& value,
+    const string& placeholder,
+    float x,
+    float y,
+    bool active,
+    const ofColor& textColor,
+    const ofColor& placeholderColor) const {
+    const bool showingPlaceholder = !placeholder.empty() && value == placeholder;
+
+    ofPushStyle();
+    ofSetColor(showingPlaceholder ? placeholderColor : textColor);
+    if (!value.empty()) {
+        font.drawString(value, x, y);
+    }
+    ofPopStyle();
+
+    drawCaretForText(font, value, placeholder, x, y, active);
+}
+
+//--------------------------------------------------------------
+void ofApp::drawCaretForText(
+    const ofTrueTypeFont& font,
+    const string& value,
+    const string& placeholder,
+    float x,
+    float y,
+    bool active) const {
+    if (!active || !shouldDrawCaret() || value == placeholder) {
+        return;
+    }
+
+    const float caretX = x + font.stringWidth(value) + 2.0f;
+    const float caretTop = y - font.stringHeight("Ay");
+    const float caretBottom = y + 4.0f;
+
+    ofPushStyle();
+    ofSetColor(80, 80, 80);
+    ofSetLineWidth(1.5f);
+    ofDrawLine(caretX, caretTop, caretX, caretBottom);
+    ofPopStyle();
+}
+
+//--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
+    auto activateLoginField = [&](int index) {
+        emailInput = index == 0;
+        passwordInput = index == 1;
+        rePasswordInput = createAccountScreen && index == 2;
+
+        if (emailInput && Email == "Email Address") Email = "";
+        if (passwordInput && Password == "Password") Password = "";
+        if (rePasswordInput && RePassword == "Re-enter Password") RePassword = "";
+    };
+
+    auto activatePopupField = [&](int index) {
+        popupNameInput = index == 0;
+        popupUserInput = index == 1;
+        popupPassInput = index == 2;
+
+        if (popupNameInput && popupName == "App/Website Name") popupName = "";
+        if (popupUserInput && popupUser == "Username") popupUser = "";
+        if (popupPassInput && popupPass == "Password") popupPass = "";
+    };
+
+    auto activateEditField = [&](int index) {
+        editNameInput = index == 0;
+        editUserInput = index == 1;
+        editPassInput = index == 2;
+    };
+
     if (mainScreen == false) {
+        if (key == OF_KEY_TAB) {
+            const int fieldCount = createAccountScreen ? 3 : 2;
+            int activeIndex = emailInput ? 0 : (passwordInput ? 1 : (rePasswordInput ? 2 : -1));
+            const int nextIndex = (activeIndex + 1 + fieldCount) % fieldCount;
+            activateLoginField(nextIndex);
+            return;
+        }
+
+        if (key == OF_KEY_RETURN || key == '\r') {
+            string action = createAccountScreen ? "Register" : "Login";
+            buttonEvent(action);
+            return;
+        }
+
         // login / register screen input
         if (key == OF_KEY_BACKSPACE) {
             if (emailInput && Email.size() > 0) Email.pop_back();
@@ -483,6 +593,44 @@ void ofApp::keyPressed(int key) {
         }
     }
     else {
+        if (editPopupOpen) {
+            if (key == OF_KEY_TAB) {
+                int activeIndex = editNameInput ? 0 : (editUserInput ? 1 : (editPassInput ? 2 : -1));
+                const int nextIndex = (activeIndex + 1 + 3) % 3;
+                activateEditField(nextIndex);
+                return;
+            }
+
+            if (key == OF_KEY_RETURN || key == '\r') {
+                string action = "Save";
+                buttonEvent(action);
+                return;
+            }
+        }
+
+        if (popupOpen) {
+            if (key == OF_KEY_TAB) {
+                int activeIndex = popupNameInput ? 0 : (popupUserInput ? 1 : (popupPassInput ? 2 : -1));
+                const int nextIndex = (activeIndex + 1 + 3) % 3;
+                activatePopupField(nextIndex);
+                return;
+            }
+
+            if (key == OF_KEY_RETURN || key == '\r') {
+                string action = "Add";
+                buttonEvent(action);
+                return;
+            }
+        }
+
+        if (key == OF_KEY_TAB && !popupOpen && !editPopupOpen) {
+            searchInput = true;
+            if (searchString == "Search") {
+                searchString = "";
+            }
+            return;
+        }
+
         // main screen input
         if (key == OF_KEY_BACKSPACE) {
             if (searchInput && searchString.size() > 0) {
@@ -637,6 +785,7 @@ void ofApp::mousePressed(int x, int y, int button) {
 
     if (rowIndex >= 0 && rowIndex < filteredEntries.size() && x < 1245 && y > 155) {
         ofRectangle pencilRect(5, 155 + rowIndex * rowHeight - scrollOffset + 10, 45, 45);
+        ofRectangle binRect(1080, 155 + rowIndex * rowHeight - scrollOffset + 10, 35, 35);
         ofRectangle eyeRect(1160, 155 + rowIndex * rowHeight - scrollOffset + 10, 55, 40);
 
         if (pencilRect.inside(x, y)) {
@@ -652,6 +801,12 @@ void ofApp::mousePressed(int x, int y, int button) {
             editConfirmBtn.toggle(true);
             editCancelBtn.toggle(true);
         }
+        else if (binRect.inside(x, y)) {
+            if (backendBridge.deleteEntry(filteredEntries[rowIndex].id, statusMessage)) {
+                entries = backendBridge.getAllEntries(statusMessage);
+                updateFilter();
+            }
+        }
         else if (eyeRect.inside(x, y)) {
             while (passwordVisible.size() <= rowIndex) passwordVisible.push_back(false);
             passwordVisible[rowIndex] = !passwordVisible[rowIndex];
@@ -666,6 +821,24 @@ void ofApp::mouseScrolled(int x, int y, float scrollX, float scrollY) {
     float contentH = filteredEntries.size() * rowHeight;
     scrollOffset -= scrollY * 20;
     scrollOffset = max(0.0f, min(scrollOffset, max(0.0f, contentH - 565)));
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseDragged(int x, int y, int button) {
+    if (!mainScreen) return;
+
+    float contentH = filteredEntries.size() * rowHeight;
+    if (contentH <= 565) return;
+
+    const float newOffset = scrollBar.mouseDragged(x, y, contentH, 565);
+    if (newOffset >= 0.0f) {
+        scrollOffset = newOffset;
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseReleased(int x, int y, int button) {
+    scrollBar.mouseReleased();
 }
 
 //--------------------------------------------------------------
@@ -691,6 +864,7 @@ void ofApp::buttonEvent(string& label) {
             loginBtn.toggle(false); createBtn.toggle(false);
             registerBtn.toggle(false); loginAccountBtn.toggle(false);
             logoutBtn.toggle(true);
+            entries = backendBridge.getAllEntries(statusMessage);
             updateFilter();
         }
     }
@@ -714,6 +888,7 @@ void ofApp::buttonEvent(string& label) {
         const string password = sanitiseField(popupPass, "Password");
 
         if (backendBridge.addEntry(appName, username, password, statusMessage)) {
+            entries = backendBridge.getAllEntries(statusMessage);
             updateFilter();
         }
         popupOpen = false;
