@@ -367,7 +367,7 @@ void ofApp::drawMainScreen() {
                 smallFont.drawString(filteredEntries[i].password, 820, centeredTextBaseline(filteredEntries[i].password));
             }
             else {
-                string masked = string(filteredEntries[i].password.size(), '*');
+                string masked = "************";
                 smallFont.drawString(masked, 820, centeredTextBaseline("Password"));
             }
 
